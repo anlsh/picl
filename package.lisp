@@ -1,4 +1,5 @@
 ;;;; package.lisp
 
 (defpackage #:picl
-  (:use #:cl))
+  (:use #:cl)
+  (:local-nicknames (#:dcl #:defclass-std) (#:an #:anaphora)))
