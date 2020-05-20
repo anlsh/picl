@@ -35,7 +35,7 @@ that's not such a bad thing) Hopefully it won't be this way for long: if you
 would like to see it evolve in a certain direction, feel free to create an issue
 or PR.
 
-### A not on `:use`
+### A note on `:use`
 
 This is a new library, and so I have the liberty to tell you this: do not, and I
 mean *do not* `:use` this package. Even after the library becomes stable I

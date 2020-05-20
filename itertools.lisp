@@ -20,8 +20,8 @@
   (make-instance 'interator-count :start start :curr start :step step))
 
 (defmethod next ((it iterator-count))
-  (with-slots ((curr curr) (step delta)) it
-    (prog1 curr (incf curr step))))
+  (with-slots (curr delta) it
+    (prog1 curr (incf curr delta))))
 
 ;; Repeat
 (dcl:defclass/std iterator-repeat (iterator)
@@ -32,7 +32,7 @@
   (make-instance 'iterator-repeat :item item :max-repeats max-repeats))
 
 (defmethod next ((it iterator-repeat))
-  (with-slots ((item item) (curr curr-repeats) (max max-repeats)) it
+  (with-slots (item (curr curr-repeats) (max max-repeats)) it
     (if max
         (if (< curr max)
             (progn (incf curr) item)
@@ -47,7 +47,7 @@
   (make-instance 'iterator-cycle :base-iter it))
 
 (defmethod next ((it iterator-cycle))
-  (with-slots ((base base-iter) (done done) (results results) (tail tail)) it
+  (with-slots ((base base-iter) done (results results) tail) it
     (if done
         (prog1 (car tail) (setf tail (or (cdr tail) results)))
         (handler-case
@@ -71,7 +71,7 @@
   (make-instance 'iterator-accumulate :base-iter iterator :func fn :curr-left init))
 
 (defmethod next ((it iterator-accumulate))
-  (with-slots ((it base-iter) (curr curr-left) (func func)) it
+  (with-slots ((it base-iter) (curr curr-left) func) it
     (setf curr (funcall func curr (next it)))))
 
 ;; Chains
@@ -86,7 +86,22 @@
   (ichain-from-iter (make-iterator args)))
 
 (defmethod next ((it iterator-chain))
-  (with-slots ((curr-it curr-it) (rem remaining-iterators)) it
+  (with-slots (curr-it (rem remaining-iterators)) it
     (unless curr-it (setf curr-it (next rem)))
     (handler-case (next curr-it)
       (stop-iteration () (setf curr-it (next rem)) (next it)))))
+
+;; Compress
+
+(dcl:defclass/std iterator-compress (iterator)
+  ((base-iter bool-iter)))
+
+(defmethod compress ((base-iter iterator) (bool-iter iterator))
+  (make-instance 'iterator-compress :base-iter base-iter :bool-iter bool-iter))
+
+(defmethod next ((it iterator-compress))
+  (with-slots (base-iter bool-iter) it
+    (let ((curr-item (next base-iter)))
+      (if (next bool-iter)
+          curr-item
+          (next it)))))
