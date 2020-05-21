@@ -1,3 +1,5 @@
+(in-package :picl)
+
 (dcl:defclass/std iterator-list (iterator)
   ((state)))
 

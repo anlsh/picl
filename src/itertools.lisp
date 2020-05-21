@@ -1,13 +1,15 @@
+(in-package :picl)
+
 ;; Utilities
-(defmethod iter-to-list (iterator)
+(defun iter-to-list (iterator)
   (handler-case (cons (next iterator) (it-to-list iterator))
     (stop-iteration () nil)))
 
-(defmethod empty-iterator ()
+(defun empty-iterator ()
   (make-iterator nil))
 
 ;; Range
-(dcl:defclass/std iterator-range ()
+(dcl:defclass/std iterator-range (iterator)
   ((start stop delta curr)))
 
 (defmethod range ((start integer) (stop integer) &key delta)
@@ -77,7 +79,7 @@
 (dcl:defclass/std iterator-accumulate (iterator)
   ((base-iter curr-left func)))
 
-(defmethod accumulate (it fn &optional init)
+(defun accumulate (it fn &optional init)
   (make-instance 'iterator-accumulate :base-iter (make-iterator it) :func fn :curr-left init))
 
 (defmethod next ((it iterator-accumulate))
@@ -89,7 +91,7 @@
 (dcl:defclass/std iterator-chain (iterator)
   ((itail curr-it)))
 
-(defmethod ichain-from-iter (it-of-its)
+(defun ichain-from-iter (it-of-its)
   (make-instance 'iterator-chain :itail (make-iterator it-of-its)))
 
 (defun ichain (&rest args)
@@ -106,7 +108,7 @@
 (dcl:defclass/std iterator-compress (iterator)
   ((base-iter bool-iter)))
 
-(defmethod compress (base-iter bool-iter)
+(defun compress (base-iter bool-iter)
   (make-instance 'iterator-compress
                  :base-iter (make-iterator base-iter)
                  :bool-iter (make-iterator bool-iter)))
@@ -123,7 +125,7 @@
 (dcl:defclass/std iterator-dropwhile (iterator)
   ((base-iter pred been-false)))
 
-(defmethod dropwhile (predicate iterator)
+(defun dropwhile (predicate iterator)
   (make-instance 'iterator-dropwhile
                  :base-iter (make-iterator iterator)
                  :pred predicate))
@@ -143,7 +145,7 @@
 (dcl:defclass/std iterator-filterfalse (iterator)
   ((base-iter pred)))
 
-(defmethod filterfalse (predicate iterator)
+(defun filterfalse (predicate iterator)
   (make-instance 'iterator-filterfalse
                  :base-iter (make-iterator iterator)
                  :pred predicate))
@@ -164,7 +166,7 @@
 (dcl:defclass/std iterator-takewhile (iterator)
   ((base-iter pred)))
 
-(defmethod takewhile (predicate iterator)
+(defun takewhile (predicate iterator)
   (make-instance 'iterator-takewhile
                  :base-iter (make-iterator iterator)
                  :pred predicate))
