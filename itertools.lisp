@@ -1,16 +1,25 @@
 ;; Utilities
-(defmethod it-to-list (iterator)
+(defmethod iter-to-list (iterator)
   (handler-case (cons (next iterator) (it-to-list iterator))
     (stop-iteration () nil)))
 
-;; A DRY Macro for defining iterators
-;; (defmacro def-simple-iterator (name &body (backing-slot-specs
-;;                                            (cons-name cons-args slot-initforms)
-;;                                            next-body))
-;;   `(progn (dcl:defclass/std ,name ,backing-slot-specs)
-;;           (defun ,cons-name ,cons-args
-;;             (make-instance ,name ,@slot-initforms))
-;;           ))
+(defmethod empty-iterator ()
+  (make-iterator nil))
+
+;; Range
+(dcl:defclass/std iterator-range ()
+  ((start stop delta curr)))
+
+(defmethod range ((start integer) (stop integer) &key delta)
+  (unless delta (setf delta 1))
+  (make-instance 'iterator-range :start start :stop stop :delta delta :curr start))
+
+(defmethod next ((it iterator-range))
+  (with-slots (curr delta stop) it
+    (if (or (and (> delta 0) (< curr stop))
+            (and (< delta 0) (> curr stop)))
+        (prog1 curr (incf curr delta))
+        (error 'stop-iteration))))
 
 ;; Count
 (dcl:defclass/std iterator-count (iterator)
@@ -43,8 +52,8 @@
 (dcl:defclass/std iterator-cycle (iterator)
   ((base-iter done results tail)))
 
-(defmethod icycle ((it iterator))
-  (make-instance 'iterator-cycle :base-iter it))
+(defun icycle (it)
+  (make-instance 'iterator-cycle :base-iter (make-iterator it)))
 
 (defmethod next ((it iterator-cycle))
   (with-slots ((base base-iter) done (results results) tail) it
@@ -63,12 +72,13 @@
 ;; Accumulate
 ;; TODO This is missing the functionality for special handling of function arguments
 ;; also, it would be good to fold this library into generic-cl/itertools somehow
+;; Also this is halfway to being useless, CL has reduce
 
 (dcl:defclass/std iterator-accumulate (iterator)
   ((base-iter curr-left func)))
 
-(defmethod accumulate ((iterator iterator) fn &optional init)
-  (make-instance 'iterator-accumulate :base-iter iterator :func fn :curr-left init))
+(defmethod accumulate (it fn &optional init)
+  (make-instance 'iterator-accumulate :base-iter (make-iterator it) :func fn :curr-left init))
 
 (defmethod next ((it iterator-accumulate))
   (with-slots ((it base-iter) (curr curr-left) func) it
@@ -77,27 +87,29 @@
 ;; Chains
 
 (dcl:defclass/std iterator-chain (iterator)
-  ((remaining-iterators curr-it)))
+  ((itail curr-it)))
 
-(defmethod ichain-from-iter ((it-of-its iterator))
-  (make-instance 'iterator-chain :remaining-iterators it-of-its))
+(defmethod ichain-from-iter (it-of-its)
+  (make-instance 'iterator-chain :itail (make-iterator it-of-its)))
 
 (defun ichain (&rest args)
-  (ichain-from-iter (make-iterator args)))
+  (ichain-from-iter args))
 
 (defmethod next ((it iterator-chain))
-  (with-slots (curr-it (rem remaining-iterators)) it
-    (unless curr-it (setf curr-it (next rem)))
+  (with-slots (curr-it itail) it
+    (unless curr-it (setf curr-it (make-iterator (next itail))))
     (handler-case (next curr-it)
-      (stop-iteration () (setf curr-it (next rem)) (next it)))))
+      (stop-iteration () (setf curr-it (make-iterator (next itail))) (next it)))))
 
 ;; Compress
 
 (dcl:defclass/std iterator-compress (iterator)
   ((base-iter bool-iter)))
 
-(defmethod compress ((base-iter iterator) (bool-iter iterator))
-  (make-instance 'iterator-compress :base-iter base-iter :bool-iter bool-iter))
+(defmethod compress (base-iter bool-iter)
+  (make-instance 'iterator-compress
+                 :base-iter (make-iterator base-iter)
+                 :bool-iter (make-iterator bool-iter)))
 
 (defmethod next ((it iterator-compress))
   (with-slots (base-iter bool-iter) it
@@ -105,3 +117,63 @@
       (if (next bool-iter)
           curr-item
           (next it)))))
+
+;; Dropwhile
+
+(dcl:defclass/std iterator-dropwhile (iterator)
+  ((base-iter pred been-false)))
+
+(defmethod dropwhile (predicate iterator)
+  (make-instance 'iterator-dropwhile
+                 :base-iter (make-iterator iterator)
+                 :pred predicate))
+
+(defmethod next ((it iterator-dropwhile))
+  (with-slots (base-iter pred been-false) it
+    (if been-false
+        (next base-iter)
+        (let ((item (next base-iter)))
+          (if (funcall pred item)
+              (next it)
+              (progn (setf been-false t)
+                     item))))))
+
+;; Filterfalse
+
+(dcl:defclass/std iterator-filterfalse (iterator)
+  ((base-iter pred)))
+
+(defmethod filterfalse (predicate iterator)
+  (make-instance 'iterator-filterfalse
+                 :base-iter (make-iterator iterator)
+                 :pred predicate))
+
+(defmethod next ((it iterator-filterfalse))
+  (with-slots (base-iter pred) it
+    (let ((item (next base-iter)))
+      (if (not (funcall pred item))
+              (next it)
+              item))))
+
+;; TODO groupby
+
+;; TODO islice
+
+;; takewhile
+
+(dcl:defclass/std iterator-takewhile (iterator)
+  ((base-iter pred)))
+
+(defmethod takewhile (predicate iterator)
+  (make-instance 'iterator-takewhile
+                 :base-iter (make-iterator iterator)
+                 :pred predicate))
+
+(defmethod next ((it iterator-takewhile))
+  (with-slots (base-iter pred been-false) it
+    (let ((item (next base-iter)))
+      (if (funcall pred item)
+          item
+          (error 'stop-iteration)))))
+
+;; zip-longest
