@@ -5,6 +5,10 @@
   (handler-case (cons (next iterator) (iter-to-list iterator))
     (stop-iteration () nil)))
 
+(defun iter-to-vec (iterator)
+  (let ((ls (iter-to-list (make-iterator iterator))))
+    (make-array (length ls) :initial-contents ls)))
+
 (defun empty-iterator ()
   (make-iterator nil))
 
@@ -214,3 +218,46 @@
                   do (incf curr)
                      (setf el (next base-it)))
           el))))
+
+;; Permutations
+
+(dcl:defclass/std iterator-permutations (iterator)
+  ((state-vec iter-vec stopped)))
+
+(defun permutations (iterlike)
+  (let ((ivec (iter-to-vec iterlike)))
+    (make-instance 'iterator-permutations
+                   :state-vec (iter-to-vec (range 0 (length ivec)))
+                   :iter-vec ivec)))
+
+(defmethod next ((it iterator-permutations))
+  (with-slots (state-vec iter-vec stopped) it
+    (if stopped
+        (error 'stop-iteration)
+        (labels ((reverse-tail (i)
+                   (loop for k below (floor (- (length state-vec) 2))
+                         do (rotatef (aref state-vec (+ i k))
+                                     (aref state-vec (- (1- (length state-vec)) k)))))
+
+                 (next-lexic ()
+                   (loop with i = nil
+                         with j = nil
+                         for k below (length state-vec)
+                         do
+                            (when (and (< k (1- (length state-vec)))
+                                       (< (aref state-vec k) (aref state-vec (1+ k))))
+                              (setf i k))
+                            (when (and i (> (aref state-vec k) (aref state-vec i)))
+                              (setf j k))
+                         finally
+                            (if (null i)
+                                (setf stopped t)
+                                (progn
+                                  (rotatef (aref state-vec i) (aref state-vec j))
+                                  (reverse-tail (1+ i)))))))
+          (prog1
+              (loop with perm-vec = (make-array (length state-vec))
+                    for i below (length state-vec)
+                    do (setf (aref perm-vec i) (aref iter-vec (aref state-vec i)))
+                    finally (return perm-vec))
+            (next-lexic))))))
