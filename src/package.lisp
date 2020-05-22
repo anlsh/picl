@@ -18,4 +18,6 @@
    #:chain
    #:cycle
    #:repeat
+   #:permutations
+   #:product
    #:take-n))

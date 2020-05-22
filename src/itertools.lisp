@@ -163,8 +163,6 @@
 
 ;; TODO groupby
 
-;; TODO islice
-
 ;; takewhile
 
 (dcl:defclass/std iterator-takewhile (iterator)
@@ -219,6 +217,47 @@
                      (setf el (next base-it)))
           el))))
 
+;; Product
+;; TODO It's missing the functionality of "repeat" argument
+(dcl:defclass/std iterator-product (iterator)
+  ((item-vec state-vec lengths stopped)))
+
+(defun product (&rest iters)
+  (loop with iter-vec = (iter-to-vec iters)
+        with item-vec = (make-array (length iter-vec))
+        with length-vec = (make-array (length iter-vec))
+        for i below (length item-vec)
+        for iter across iter-vec
+        do (setf (aref item-vec i) (iter-to-vec (aref iter-vec i)))
+           (setf (aref length-vec i) (length (aref item-vec i)))
+        minimizing (aref length-vec i) into min-len
+        finally
+           (if (zerop min-len)
+               (empty-iterator)
+               (return (make-instance 'iterator-product
+                                      :item-vec item-vec
+                                      :state-vec (make-array (length item-vec) :initial-element 0)
+                                      :lengths length-vec)))))
+
+(defmethod next ((it iterator-product))
+  (with-slots (item-vec state-vec lengths stopped) it
+    (if stopped
+        (error 'stop-iteration)
+        (prog1 (loop with product = (make-array (length state-vec))
+                     for i below (length product)
+                     for ii = (aref state-vec i)
+                     do (setf (aref product i) (aref (aref item-vec i) ii))
+                     finally (return product))
+          (labels ((next-combo (i)
+                     (if (< i 0)
+                         (setf stopped t)
+                         (progn
+                           (incf (aref state-vec i))
+                           (when (>= (aref state-vec i) (aref lengths i))
+                             (setf (aref state-vec i) 0)
+                             (next-combo (1- i)))))))
+            (next-combo (1- (length state-vec))))))))
+
 ;; Permutations
 
 (dcl:defclass/std iterator-permutations (iterator)
@@ -235,10 +274,9 @@
     (if stopped
         (error 'stop-iteration)
         (labels ((reverse-tail (i)
-                   (loop for k below (floor (- (length state-vec) 2))
+                   (loop for k below (floor (- (length state-vec) i) 2)
                          do (rotatef (aref state-vec (+ i k))
                                      (aref state-vec (- (1- (length state-vec)) k)))))
-
                  (next-lexic ()
                    (loop with i = nil
                          with j = nil
