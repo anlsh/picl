@@ -187,3 +187,30 @@
                        (stop-iteration () (return a)))
             into a
           finally (return a))))
+
+;; islice
+
+(dcl:defclass/std iterator-islice (iterator)
+  ((base-it start stop delta curr)))
+
+(defun islice (iterlike start stop delta)
+  (unless (and (>= start 0) (>= stop 0) (>= delta 0))
+    (error (format nil "Args must all be positive~%")))
+  (make-instance 'iterator-islice
+                 :base-it (make-iterator iterlike)
+                 :start start :stop stop :delta delta :curr 0))
+
+(defmethod next ((it iterator-islice))
+  (with-slots (base-it curr start stop delta) it
+    (if (< curr start)
+        (progn (loop for _ below start
+                     do (incf curr) (next base-it))
+               (if (< curr stop)
+                   (progn (incf curr) (next base-it))
+                   (error 'stop-iteration)))
+        (let (el)
+          (loop for i below delta
+                when (>= curr stop) do (error 'stop-iteration)
+                  do (incf curr)
+                     (setf el (next base-it)))
+          el))))

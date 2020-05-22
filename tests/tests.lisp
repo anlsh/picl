@@ -51,3 +51,9 @@
 (f:def-test test/cycle ()
   (f:is (equalp '(1 2 3 4 1 2 3 4)
                 (take-n 8 (cycle '(1 2 3 4))))))
+
+(f:def-test test/islice ()
+  (f:is (iter-makes (iter-to-list (range 10 20 :delta 2))
+                    (islice (icount 0 1) 10 20 2)))
+  (f:is (iter-makes (iter-to-list (range 113 257 :delta 7))
+                    (islice (icount 0 1) 113 257 7))))

@@ -14,6 +14,7 @@
    #:empty-iterator
    #:range
    #:icount
+   #:islice
    #:chain
    #:cycle
    #:repeat
