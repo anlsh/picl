@@ -13,4 +13,8 @@
    #:iter-to-list
    #:empty-iterator
    #:range
-   #:))
+   #:icount
+   #:chain
+   #:cycle
+   #:repeat
+   #:take-n))

@@ -1,3 +1,3 @@
 (defpackage picl-tests
-  (:use :cl)
+  (:use :cl :picl)
   (:local-nicknames (:f :fiveam)))

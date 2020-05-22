@@ -2,7 +2,7 @@
 
 ;; Utilities
 (defun iter-to-list (iterator)
-  (handler-case (cons (next iterator) (it-to-list iterator))
+  (handler-case (cons (next iterator) (iter-to-list iterator))
     (stop-iteration () nil)))
 
 (defun empty-iterator ()
@@ -28,7 +28,7 @@
   ((start curr delta)))
 
 (defun icount (start step)
-  (make-instance 'interator-count :start start :curr start :step step))
+  (make-instance 'iterator-count :start start :curr start :delta step))
 
 (defmethod next ((it iterator-count))
   (with-slots (curr delta) it
@@ -39,7 +39,7 @@
   ((item max-repeats)
    (curr-repeats :std 0)))
 
-(defun irepeat (item &optional max-repeats)
+(defun repeat (item &optional max-repeats)
   (make-instance 'iterator-repeat :item item :max-repeats max-repeats))
 
 (defmethod next ((it iterator-repeat))
@@ -54,7 +54,7 @@
 (dcl:defclass/std iterator-cycle (iterator)
   ((base-iter done results tail)))
 
-(defun icycle (it)
+(defun cycle (it)
   (make-instance 'iterator-cycle :base-iter (make-iterator it)))
 
 (defmethod next ((it iterator-cycle))
@@ -91,11 +91,11 @@
 (dcl:defclass/std iterator-chain (iterator)
   ((itail curr-it)))
 
-(defun ichain-from-iter (it-of-its)
+(defun chain-from-iter (it-of-its)
   (make-instance 'iterator-chain :itail (make-iterator it-of-its)))
 
-(defun ichain (&rest args)
-  (ichain-from-iter args))
+(defun chain (&rest args)
+  (chain-from-iter args))
 
 (defmethod next ((it iterator-chain))
   (with-slots (curr-it itail) it
@@ -178,4 +178,12 @@
           item
           (error 'stop-iteration)))))
 
-;; zip-longest
+;; take-n (not in "core" itertools but very nice for testing)
+
+(defun take-n (n iterable)
+  (let ((iterator (make-iterator iterable)))
+    (loop for i below n
+          collecting (handler-case (next iterator)
+                       (stop-iteration () (return a)))
+            into a
+          finally (return a))))
