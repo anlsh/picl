@@ -11,6 +11,7 @@
 
    ;; Itertools
    #:iter-to-list
+   #:iter-to-vec
    #:empty-iterator
    #:range
    #:icount

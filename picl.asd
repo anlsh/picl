@@ -25,8 +25,9 @@
   :license  "MIT"
   :version "0.0.1"
   :serial t
-  :depends-on (#:picl #:fiveam)
+  :depends-on (#:picl #:fiveam #:generic-cl #:alexandria)
   :components
   ((:module "tests"
     :components ((:file "package")
-                 (:file "tests" :depends-on ("package"))))))
+                 (:file "tests" :depends-on ("package"))
+                 (:file "test-combinatoric" :depends-on ("package"))))))

@@ -2,24 +2,26 @@
 ;; implementations from Python's Standard library
 ;; https://docs.python.org/3.9/library/itertools.html
 
+(in-package :picl)
+
 ;; Product
 ;; TODO It's missing the functionality of "repeat" argument
+
 (dcl:defclass/std iterator-product (iterator)
   ((item-vec state-vec lengths stopped)))
 
-(defun product (&rest iters)
-  (loop with iter-vec = (iter-to-vec iters)
-        with item-vec = (make-array (length iter-vec))
-        with length-vec = (make-array (length iter-vec))
+(defun product (&rest iterlikes)
+  (loop with item-vec = (make-array (length iterlikes))
+        with length-vec = (make-array (length iterlikes))
         for i below (length item-vec)
-        for iter across iter-vec
-        do (setf (aref item-vec i) (iter-to-vec (aref iter-vec i)))
+        for iter in iterlikes
+        do (setf (aref item-vec i) (iter-to-vec iter))
            (setf (aref length-vec i) (length (aref item-vec i)))
         minimizing (aref length-vec i) into min-len
         finally
-           (if (zerop min-len)
-               (empty-iterator)
-               (return (make-instance 'iterator-product
+           (return (if (zerop min-len)
+                       (empty-iterator)
+                       (make-instance 'iterator-product
                                       :item-vec item-vec
                                       :state-vec (make-array (length item-vec)
                                                              :initial-element 0)
@@ -117,13 +119,11 @@
 
 (defun combinations-with-rep (iterlike r)
   (let ((pool (iter-to-vec iterlike)))
-    (if (not (and (> r 0) (> (length pool) 0)))
-        (empty-iterator)
-        (make-instance 'iterator-combinations-with-rep
-                       :indices (iter-to-vec (repeat 0 r))
-                       :pool pool
-                       :r r
-                       :n (length pool)))))
+    (make-instance 'iterator-combinations-with-rep
+                   :indices (iter-to-vec (repeat 0 r))
+                   :pool pool
+                   :r r
+                   :n (length pool))))
 
 ;; TODO Strictly speaking, this should return a multiset
 (defmethod next ((it iterator-combinations-with-rep))
