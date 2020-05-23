@@ -12,6 +12,7 @@
     :components ((:file "package")
                  (:file "interface" :depends-on ("package"))
                  (:file "itertools" :depends-on ("interface"))
+                 (:file "combinatoric" :depends-on ("interface"))
                  (:module "iterator-impls/" :depends-on ("interface")
                   :components
                   ((:file "list")))
