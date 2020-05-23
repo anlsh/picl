@@ -317,7 +317,7 @@
 
 (defmethod next ((it iterator-r-permutations))
   (with-slots (stack stacklen ivec stopped r) it
-    ;; (format t "Going In:~%Stack ~a.~%iVec ~a.~%~%" (reverse stack) ivec)
+    (format t "~%(1)   Stack ~a.~%      iVec ~a.~%~%" (reverse stack) ivec)
     (if stopped
         (error 'stop-iteration)
         (prog1 (loop with ret-vec = (make-array r)
@@ -332,7 +332,7 @@
                          (setf stopped t)
                          (progn
                            (swap-top-of-stack)
-                           ;; (format t "Point 1:~%Stack ~a.~%iVec ~a.~%~%" (reverse stack) ivec)
+                           (format t "(2)  Stack ~a.~%     iVec ~a.~%~%" (reverse stack) ivec)
                            (incf (car stack))
                            (if (> (car stack) (- (length ivec) stacklen))
                                (progn (decf stacklen)
@@ -343,5 +343,6 @@
                                             do (push 0 stack)
                                                (incf stacklen))))))))
             (advance-stack)
-            ;; (format t "Going In:~%Stack: ~a.~%iVec ~a~%" (reverse stack) ivec)
+            (format t "(3)   Stack: ~a.~%      iVec ~a~%==========================~%"
+                    (reverse stack) ivec)
             )))))
