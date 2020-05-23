@@ -261,50 +261,44 @@
 ;; Permutations
 
 (dcl:defclass/std iterator-permutations (iterator)
-  ((state-vec iter-vec stopped)))
+  ((r n pool indices stopped cycles)))
 
-;; TODO Does not handle r-permutations
-;; TODO Does not handle repeated elements in permutations
-(defun permutations (iterlike)
-  (let ((ivec (iter-to-vec iterlike)))
-    (make-instance 'iterator-permutations
-                   :state-vec (iter-to-vec (range 0 (length ivec)))
-                   :iter-vec ivec)))
+(defun permutations (iterlike &optional r)
+  (let* ((ivec (iter-to-vec iterlike))
+         (n (length ivec))
+         (r (or r n)))
+    (if (> r n)
+        (empty-iterator)
+        (make-instance 'iterator-permutations
+                       :indices (iter-to-vec (range 0 (length ivec)))
+                       :cycles (iter-to-vec (range n (- n r) :delta -1))
+                       :pool ivec
+                       :r r :n n))))
 
 (defmethod next ((it iterator-permutations))
-  (with-slots (state-vec iter-vec stopped) it
+  (with-slots (r n pool indices stopped cycles) it
     (if stopped
         (error 'stop-iteration)
-        (labels ((reverse-tail (i)
-                   (loop for k below (floor (- (length state-vec) i) 2)
-                         do (rotatef (aref state-vec (+ i k))
-                                     (aref state-vec (- (1- (length state-vec)) k)))))
-                 (next-lexic ()
-                   (loop with i = nil
-                         with j = nil
-                         for k below (length state-vec)
-                         do
-                            (when (and (< k (1- (length state-vec)))
-                                       (< (aref state-vec k) (aref state-vec (1+ k))))
-                              (setf i k))
-                            (when (and i (> (aref state-vec k) (aref state-vec i)))
-                              (setf j k))
-                         finally
-                            (if (null i)
-                                (setf stopped t)
-                                (progn
-                                  (rotatef (aref state-vec i) (aref state-vec j))
-                                  (reverse-tail (1+ i)))))))
-          (prog1
-              (loop with perm-vec = (make-array (length state-vec))
-                    for i below (length state-vec)
-                    do (setf (aref perm-vec i) (aref iter-vec (aref state-vec i)))
-                    finally (return perm-vec))
-            (next-lexic))))))
+        (prog1 (loop with ret = (make-array r)
+                     for i below r
+                     do (setf (aref ret i) (aref pool (aref indices i)))
+                     finally (return ret))
+          (loop for i from (1- r) downto 0
+                do (decf (aref cycles i))
+                   (if (zerop (aref cycles i))
+                       (progn (loop with curr = (aref indices i)
+                                    for j from i below (1- n)
+                                    do (setf (aref indices j) (aref indices (1+ j)))
+                                    finally (setf (aref indices (1- n)) curr))
+                              (setf (aref cycles i) (- n i)))
+                       (let ((j (aref cycles i)))
+                         (rotatef (aref indices i) (aref indices (- n j)))
+                         (return)))
+                finally (setf stopped t))))))
 
 ;; Combinations
 (dcl:defclass/std iterator-combinations (iterator)
-  ((indices pool stopped r)))
+  ((indices pool stopped r n)))
 
 (defun combinations (iterlike r)
   (let ((ivec (iter-to-vec iterlike)))
@@ -313,18 +307,18 @@
         (make-instance 'iterator-combinations
                        :indices (iter-to-vec (range 0 r :delta 1))
                        :pool ivec
-                       :r r))))
+                       :r r :n (length ivec)))))
 
 ;; TODO Strictly speaking, this should return sets: not vectors
 (defmethod next ((it iterator-combinations))
-  (with-slots (indices pool stopped r) it
+  (with-slots (indices pool stopped r n) it
     (when stopped (error 'stop-iteration))
     (prog1 (loop with ret-vec = (make-array r)
                  for i below r
                  do (setf (aref ret-vec i) (aref pool (aref indices i)))
                  finally (return ret-vec))
       (loop for i from (1- r) downto 0
-            when (/= (aref indices i) (+ i (length pool) (- r)))
+            when (/= (aref indices i) (+ i n (- r)))
               do (incf (aref indices i))
                  (loop for j from (1+ i) to (1- r)
                        do (setf (aref indices j) (1+ (aref indices (1- j)))))
