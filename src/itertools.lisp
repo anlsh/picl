@@ -263,6 +263,8 @@
 (dcl:defclass/std iterator-permutations (iterator)
   ((state-vec iter-vec stopped)))
 
+;; TODO Does not handle r-permutations
+;; TODO Does not handle repeated elements in permutations
 (defun permutations (iterlike)
   (let ((ivec (iter-to-vec iterlike)))
     (make-instance 'iterator-permutations
@@ -299,3 +301,47 @@
                     do (setf (aref perm-vec i) (aref iter-vec (aref state-vec i)))
                     finally (return perm-vec))
             (next-lexic))))))
+
+;; R-permutations
+(dcl:defclass/std iterator-r-permutations (iterator)
+  ((stack ivec stacklen stopped r)))
+
+(defun r-permutations (iterlike r)
+  (let ((ivec (iter-to-vec iterlike)))
+    (make-instance 'iterator-r-permutations
+                   :stack (take-n r (repeat 0))
+                   :r r
+                   :stacklen r
+                   :ivec ivec
+                   :stopped nil)))
+
+(defmethod next ((it iterator-r-permutations))
+  (with-slots (stack stacklen ivec stopped r) it
+    ;; (format t "Going In:~%Stack ~a.~%iVec ~a.~%~%" (reverse stack) ivec)
+    (if stopped
+        (error 'stop-iteration)
+        (prog1 (loop with ret-vec = (make-array r)
+                     for i below r
+                     do (setf (aref ret-vec i) (aref ivec i))
+                     finally (return ret-vec))
+          (labels ((swap-top-of-stack ()
+                     (rotatef (aref ivec (1- stacklen))
+                              (aref ivec (+ (1- stacklen) (car stack)))))
+                   (advance-stack ()
+                     (if (null stack)
+                         (setf stopped t)
+                         (progn
+                           (swap-top-of-stack)
+                           ;; (format t "Point 1:~%Stack ~a.~%iVec ~a.~%~%" (reverse stack) ivec)
+                           (incf (car stack))
+                           (if (> (car stack) (- (length ivec) stacklen))
+                               (progn (decf stacklen)
+                                      (pop stack)
+                                      (advance-stack))
+                               (progn (swap-top-of-stack)
+                                      (loop while (< stacklen r)
+                                            do (push 0 stack)
+                                               (incf stacklen))))))))
+            (advance-stack)
+            ;; (format t "Going In:~%Stack: ~a.~%iVec ~a~%" (reverse stack) ivec)
+            )))))

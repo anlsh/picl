@@ -19,5 +19,6 @@
    #:cycle
    #:repeat
    #:permutations
+   #:r-permutations
    #:product
    #:take-n))
