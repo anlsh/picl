@@ -302,48 +302,105 @@
                     finally (return perm-vec))
             (next-lexic))))))
 
-;; R-permutations
-(dcl:defclass/std iterator-r-permutations (iterator)
-  ((stack ivec stacklen stopped r)))
+;; Combinations
 
-(defun r-permutations (iterlike r)
+(dcl:defclass/std iterator-combinations (iterator)
+  ((state-vec iter-vec stopped r)))
+
+(defun combinations (iterlike r)
   (let ((ivec (iter-to-vec iterlike)))
-    (make-instance 'iterator-r-permutations
-                   :stack (take-n r (repeat 0))
-                   :r r
-                   :stacklen r
-                   :ivec ivec
-                   :stopped nil)))
+    (if (> r (length ivec))
+        (empty-iterator)
+        (make-instance 'iterator-combinations
+                       :state-vec (iter-to-vec (range 0 r :delta 1))
+                       :iter-vec ivec
+                       :r r))))
 
-(defmethod next ((it iterator-r-permutations))
-  (with-slots (stack stacklen ivec stopped r) it
-    ;; (format t "~%(1)   Stack ~a.~%      iVec ~a.~%~%" (reverse stack) ivec)
-    (if stopped
-        (error 'stop-iteration)
-        (prog1 (loop with ret-vec = (make-array r)
-                     for i below r
-                     do (setf (aref ret-vec i) (aref ivec i))
-                     finally (format t "Return vector is ~a~%" ret-vec)
-                             (format t "Stack is ~a~%" (reverse stack))
-                             (return ret-vec))
-          (labels ((swap-top-of-stack ()
-                     (rotatef (aref ivec (1- stacklen))
-                              (aref ivec (+ (1- stacklen) (car stack)))))
-                   (advance-stack ()
-                     (if (null stack)
-                         (setf stopped t)
-                         (progn
-                           (swap-top-of-stack)
-                           ;; (format t "(2)  Stack ~a.~%     iVec ~a.~%~%" (reverse stack) ivec)
-                           (incf (car stack))
-                           (if (> (car stack) (- (length ivec) stacklen))
-                               (progn (decf stacklen)
-                                      (pop stack)
-                                      (advance-stack))
-                               (progn (swap-top-of-stack)
-                                      (loop while (< stacklen r)
-                                            do (push 0 stack)
-                                               (incf stacklen))))))))
-            (advance-stack)
-            (format t "================================================~%")
-            )))))
+
+
+;; def combinations(iterable, r):
+;;     # combinations('ABCD', 2) --> AB AC AD BC BD CD
+;;     # combinations(range(4), 3) --> 012 013 023 123
+;;     pool = tuple(iterable)
+;;     n = len(pool)
+;;     if r > n:
+;;         return
+;;     indices = list(range(r))
+;;     yield tuple(pool[i] for i in indices)
+;;     while True:
+;;         for i in reversed(range(r)):
+;;             if indices[i] != i + n - r:
+;;                 break
+;;         else:
+;;             return
+;;         indices[i] += 1
+;;         for j in range(i+1, r):
+;;             indices[j] = indices[j-1] + 1
+;;         yield tuple(pool[i] for i in indices)
+
+
+;; TODO Strictly speaking, this should return sets: not vectors
+(defmethod next ((it iterator-combinations))
+  (with-slots (state-vec iter-vec stopped r) it
+    (when stopped (error 'stop-iteration))
+    (prog1 (loop with ret-vec = (make-array r)
+                 for i below r
+                 do (setf (aref ret-vec i) (aref iter-vec (aref state-vec i)))
+                 finally (return ret-vec))
+      (loop for i from (1- r) downto 0
+            when (/= (aref state-vec i) (+ i (length iter-vec) (- r)))
+              do (incf (aref state-vec i))
+                 (loop for j from (1+ i) to (1- r)
+                       do (setf (aref state-vec j) (1+ (aref state-vec (1- j)))))
+                 (return)
+            finally (setf stopped t)))))
+
+;; R-permutations
+;; (dcl:defclass/std iterator-r-permutations (iterator)
+;;   ((stack ivec stacklen stopped r)))
+
+;; (defun r-permutations (iterlike r)
+;;   (let ((ivec (iter-to-vec iterlike)))
+;;     (make-instance 'iterator-r-permutations
+;;                    :stack (take-n r (repeat 0))
+;;                    :r r
+;;                    :stacklen r
+;;                    :ivec ivec
+;;                    :stopped nil)))
+
+;; (defmethod next ((it iterator-r-permutations))
+;;   (with-slots (stack stacklen ivec stopped r) it
+;;     ;; (format t "~%(1)   Stack ~a.~%      iVec ~a.~%~%" (reverse stack) ivec)
+;;     (if stopped
+;;         (error 'stop-iteration)
+;;         (prog1 (loop with ret-vec = (make-array r)
+;;                      for i below r
+;;                      do (setf (aref ret-vec i) (aref ivec i))
+;;                      finally (format t "Return vector is ~a~%" ret-vec)
+;;                              (return ret-vec))
+;;           (labels ((swap-top-of-stack ()
+;;                      (rotatef (aref ivec (1- stacklen))
+;;                               (aref ivec (+ (1- stacklen) (car stack)))))
+;;                    (advance-stack ()
+;;                      (format t "Stack: ~a~a~a~a iVec:~a~%" (reverse stack) #\tab #\tab #\tab ivec)
+;;                      (if (null stack)
+;;                          (setf stopped t)
+;;                          (progn
+;;                            (if (>= (car stack) (- (length ivec) stacklen))
+;;                                (progn
+;;                                       (decf stacklen)
+;;                                       (pop stack)
+;;                                       (advance-stack))
+;;                                (progn
+;;                                  ;; (swap-top-of-stack)
+;;                                  (incf (car stack))
+;;                                  (swap-top-of-stack)
+;;                                  (loop while (< stacklen r)
+;;                                        do (push 0 stack)
+;;                                           (incf stacklen)
+;;                                        finally
+;;                      (format t "Stack: ~a~a~a~a iVec:~a~%" (reverse stack) #\tab #\tab #\tab ivec)
+;;                                        )))))))
+;;             (advance-stack)
+;;             (format t "================================================~%")
+;;             )))))
