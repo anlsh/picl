@@ -334,7 +334,7 @@
                          (setf stopped t)
                          (progn
                            (swap-top-of-stack)
-                           (format t "(2)  Stack ~a.~%     iVec ~a.~%~%" (reverse stack) ivec)
+                           ;; (format t "(2)  Stack ~a.~%     iVec ~a.~%~%" (reverse stack) ivec)
                            (incf (car stack))
                            (if (> (car stack) (- (length ivec) stacklen))
                                (progn (decf stacklen)
