@@ -21,7 +21,8 @@
                (empty-iterator)
                (return (make-instance 'iterator-product
                                       :item-vec item-vec
-                                      :state-vec (make-array (length item-vec) :initial-element 0)
+                                      :state-vec (make-array (length item-vec)
+                                                             :initial-element 0)
                                       :lengths length-vec)))))
 
 (defmethod next ((it iterator-product))

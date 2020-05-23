@@ -1,7 +1,7 @@
 ;;;; picl.asd
 
 (asdf:defsystem #:picl
-  :description "Python Iterators in Common Lisp"
+  :description "Python Itertools in Common Lisp"
   :author "Anish Moorthy <anlsh@protonmail.com>"
   :license  "MIT"
   :version "0.0.1"

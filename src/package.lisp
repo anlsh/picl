@@ -22,4 +22,5 @@
    #:combinations
    #:combinations-with-rep
    #:product
+   #:tee
    #:take-n))
