@@ -20,5 +20,6 @@
    #:repeat
    #:permutations
    #:combinations
+   #:combinations-with-rep
    #:product
    #:take-n))

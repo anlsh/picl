@@ -303,57 +303,65 @@
             (next-lexic))))))
 
 ;; Combinations
-
 (dcl:defclass/std iterator-combinations (iterator)
-  ((state-vec iter-vec stopped r)))
+  ((indices pool stopped r)))
 
 (defun combinations (iterlike r)
   (let ((ivec (iter-to-vec iterlike)))
     (if (> r (length ivec))
         (empty-iterator)
         (make-instance 'iterator-combinations
-                       :state-vec (iter-to-vec (range 0 r :delta 1))
-                       :iter-vec ivec
+                       :indices (iter-to-vec (range 0 r :delta 1))
+                       :pool ivec
                        :r r))))
-
-
-
-;; def combinations(iterable, r):
-;;     # combinations('ABCD', 2) --> AB AC AD BC BD CD
-;;     # combinations(range(4), 3) --> 012 013 023 123
-;;     pool = tuple(iterable)
-;;     n = len(pool)
-;;     if r > n:
-;;         return
-;;     indices = list(range(r))
-;;     yield tuple(pool[i] for i in indices)
-;;     while True:
-;;         for i in reversed(range(r)):
-;;             if indices[i] != i + n - r:
-;;                 break
-;;         else:
-;;             return
-;;         indices[i] += 1
-;;         for j in range(i+1, r):
-;;             indices[j] = indices[j-1] + 1
-;;         yield tuple(pool[i] for i in indices)
-
 
 ;; TODO Strictly speaking, this should return sets: not vectors
 (defmethod next ((it iterator-combinations))
-  (with-slots (state-vec iter-vec stopped r) it
+  (with-slots (indices pool stopped r) it
     (when stopped (error 'stop-iteration))
     (prog1 (loop with ret-vec = (make-array r)
                  for i below r
-                 do (setf (aref ret-vec i) (aref iter-vec (aref state-vec i)))
+                 do (setf (aref ret-vec i) (aref pool (aref indices i)))
                  finally (return ret-vec))
       (loop for i from (1- r) downto 0
-            when (/= (aref state-vec i) (+ i (length iter-vec) (- r)))
-              do (incf (aref state-vec i))
+            when (/= (aref indices i) (+ i (length pool) (- r)))
+              do (incf (aref indices i))
                  (loop for j from (1+ i) to (1- r)
-                       do (setf (aref state-vec j) (1+ (aref state-vec (1- j)))))
+                       do (setf (aref indices j) (1+ (aref indices (1- j)))))
                  (return)
             finally (setf stopped t)))))
+
+
+(dcl:defclass/std iterator-combinations-with-rep (iterator)
+  ((indices pool stopped r n)))
+
+(defun combinations-with-rep (iterlike r)
+  (let ((pool (iter-to-vec iterlike)))
+    (if (not (and (> r 0) (> (length pool) 0)))
+        (empty-iterator)
+        (make-instance 'iterator-combinations-with-rep
+                       :indices (iter-to-vec (repeat 0 r))
+                       :pool pool
+                       :r r
+                       :n (length pool)))))
+
+;; TODO Strictly speaking, this should return a multiset
+(defmethod next ((it iterator-combinations-with-rep))
+  (with-slots (indices pool stopped r n) it
+    (when stopped (error 'stop-iteration))
+    (prog1 (loop with ret-vec = (make-array r)
+                 for i below r
+                 do (setf (aref ret-vec i) (aref pool (aref indices i)))
+                 finally (return ret-vec))
+      (loop for i from (1- r) downto 0
+            when (/= (aref indices i) (1- n))
+              do
+                 (loop for j from i below r
+                       with el = (1+ (aref indices i))
+                       do (setf (aref indices j) el))
+                 (return)
+            finally (setf stopped t)))))
+
 
 ;; R-permutations
 ;; (dcl:defclass/std iterator-r-permutations (iterator)
