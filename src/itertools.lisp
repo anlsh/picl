@@ -1,5 +1,25 @@
 (in-package :picl)
 
+(defmacro def-iter (name state-vars (constructor-name constructor-params &body cons-body)
+                    &body next-body)
+  (declare (ignore name))
+  `(defun ,constructor-name ,constructor-params
+     (let ,state-vars
+       (macrolet ((init-state (&rest args)
+                    `(progn ,@(loop for (aname aform) in args
+                                    collect `(setf ,aname ,aform)))))
+         (progn ,@cons-body
+                (lambda () ,@next-body))))))
+
+(def-iter range (+start +stop +delta +curr)
+    (make-range (start stop delta)
+      (unless delta (setf delta 1))
+      (init-state (+start start) (+stop stop) (+delta delta) (+curr start)))
+  (if (or (and (> +delta 0) (< +curr +stop))
+          (and (< +delta 0) (> +curr +stop)))
+        (prog1 +curr (incf +curr +delta))
+        (error 'stop-iteration)))
+
 ;; Utilities
 (defun iter-to-list (iterator)
   (handler-case (cons (next iterator) (iter-to-list iterator))

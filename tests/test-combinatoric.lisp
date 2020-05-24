@@ -1,9 +1,6 @@
 (in-package :picl-tests)
 (f:in-suite picl-test-suite)
 
-(defun num-combinations (n r)
-  (/ (alx:factorial n) (* (alx:factorial r) (alx:factorial (- n r)))))
-
 (defun lexic-lt (i l1 l2)
   (if (= i (length l1) (length l2))
       t
