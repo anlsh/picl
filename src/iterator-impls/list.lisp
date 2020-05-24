@@ -1,13 +1,7 @@
 (in-package :picl)
 
-(dcl:defclass/std iterator-list (iterator)
-  ((state)))
-
 (defmethod make-iterator ((obj list))
-  (make-instance 'iterator-list :state obj))
-
-(defmethod next ((it iterator-list))
-  (with-slots ((state state)) it
-    (if (null state)
+  (lambda ()
+    (if (null obj)
         (error 'stop-iteration)
-        (prog1 (car state) (setf state (cdr state))))))
+        (prog1 (car obj) (setf obj (cdr obj))))))

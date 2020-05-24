@@ -11,9 +11,10 @@
   ((:module "src"
     :components ((:file "package")
                  (:file "interface" :depends-on ("package"))
-                 (:file "itertools" :depends-on ("interface"))
-                 (:file "combinatoric" :depends-on ("interface"))
-                 (:module "iterator-impls/" :depends-on ("interface")
+                 (:file "utils" :depends-on ("interface"))
+                 (:file "itertools" :depends-on ("utils"))
+                 (:file "combinatoric" :depends-on ("utils"))
+                 (:module "iterator-impls/" :depends-on ("utils")
                   :components
                   ((:file "list")))
                  (:file "picl" :depends-on ("package"))))))

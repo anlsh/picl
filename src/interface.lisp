@@ -3,9 +3,10 @@
 (defclass iterator () ())
 
 (defgeneric make-iterator (obj))
-(defmethod make-iterator ((obj iterator))
+(defmethod make-iterator ((obj function))
   obj)
 
-(defgeneric next (iterable))
+(defun next (iterator)
+  (funcall iterator))
 
 (define-condition stop-iteration (simple-error) ())
