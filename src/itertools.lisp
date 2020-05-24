@@ -1,6 +1,6 @@
 (in-package :picl)
 
-(def-iter _ (=curr =stop =step)
+(def-iter iterator-range (=curr =stop =step)
 
     (range (s0 &optional s1 (step 1))
       (init-state (=curr (if s1 s0 0))
@@ -12,12 +12,12 @@
       (prog1 =curr (incf =curr =step))
       (error 'stop-iteration)))
 
-(def-iter _ (curr =step)
+(def-iter iterator-icount (curr =step)
     (icount (start step)
       (init-state (curr start) (=step step)))
   (prog1 curr (incf curr =step)))
 
-(def-iter _ (max curr =item)
+(def-iter iterator-repeat (max curr =item)
     (repeat (item &optional max-repeats)
       (init-state (=item item) (max max-repeats) (curr 0)))
   (if max
@@ -26,7 +26,7 @@
             (error 'stop-iteration))
         =item))
 
-(def-iter _ (base-iter stopped results tail)
+(def-iter iterator-cycle (base-iter stopped results tail)
     (cycle (iterlike)
       (init-state (base-iter (make-iterator iterlike))))
   (if stopped
@@ -49,7 +49,7 @@
 
 ;; Chains
 
-(def-iter _ (itail)
+(def-iter iterator-chain-from-iter (itail)
     (chain-from-iter (it-of-its)
       (init-state (itail (make-iterator it-of-its))))
   (unless itail (setf itail (make-iterator (next itail))))
@@ -63,7 +63,7 @@
 
 ;; Compress
 
-(def-iter _ (base-iter bool-iter)
+(def-iter iterator-compress (base-iter bool-iter)
     (compress (base-iterlike bool-iterlike)
       (init-state (base-iter (make-iterator base-iterlike))
                   (bool-iter (make-iterator bool-iterlike))))
@@ -74,7 +74,7 @@
 
 ;; Dropwhile
 
-(def-iter _ (base-iter pred been-false)
+(def-iter iterator-dropwhile (base-iter pred been-false)
     (dropwhile (predicate iterlike)
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
   (if been-false
@@ -86,7 +86,7 @@
                      item)))))
 
 ;; Filterfalse
-(def-iter _ (base-iter pred)
+(def-iter iterator-filterfalse (base-iter pred)
     (filterfalse (predicate iterlike)
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
   (let ((item (next base-iter)))
@@ -94,7 +94,7 @@
               (self)
               item)))
 
-(def-iter _ (base-iter =fn)
+(def-iter iterator-starmap (base-iter =fn)
     (starmap (iterlike fn)
       (init-state (base-iter (make-iterator iterlike)) (=fn fn)))
   (apply fn (iter-to-list (next base-iter))))
