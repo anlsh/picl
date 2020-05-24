@@ -3,23 +3,26 @@
 ;; produces from raw function representation (which is what it currently implements)
 ;; to generic dispatch based (what is currently used throughout the code)
 ;;
-;; Not sure how useful it's going to be tbh: it's anaphoric, and plus whenever a state
-;; variables has the same name as a constructor argument one (probably the state variable.
-;; since it's not user-facing) will have to be mangled
-;;
-;; I also don't want to make users use this, so the representation will probably have
-;; to be nailed down before initial release anyways
+;; TODO The implementation sucks :|
 (defmacro def-iter (name state-vars (constructor-name constructor-params &body cons-body)
-                    &body next-body)
-  (declare (ignore name))
-  `(defun ,constructor-name ,constructor-params
-     (let ,state-vars
-       (macrolet ((init-state (&rest args)
-                    `(progn ,@(loop for (aname aform) in args
-                                      collect `(setf ,aname ,aform)))))
-         ,@cons-body
-         (labels ((self () ,@next-body))
-           #'self)))))
+                      &body next-body)
+    (declare (ignore name))
+    (alexandria:with-gensyms (next-fname)
+      `(labels ((,next-fname (&key ,@state-vars)
+                  (labels ((self () ,@next-body)) #'self)))
+         (defun ,constructor-name ,constructor-params
+           (macrolet
+               ((init-state (&rest argspecs)
+                  (list 'apply '#',next-fname
+                        (apply #'append
+                               '(list )
+                               (mapcar (lambda (aspec)
+                                          (if (symbolp aspec)
+                                              (list (alx:make-keyword aspec) aspec)
+                                              (destructuring-bind (aname adef) aspec
+                                                (list (alx:make-keyword aname) adef))))
+                                        argspecs)))))
+             ,@cons-body)))))
 
 ;; Utilities
 (defun iter-to-list (iterlike)

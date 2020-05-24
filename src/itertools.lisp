@@ -1,30 +1,28 @@
 (in-package :picl)
 
-(def-iter iterator-range (=curr =stop =step)
+(def-iter iterator-range (curr stop step)
 
     (range (s0 &optional s1 (step 1))
-      (init-state (=curr (if s1 s0 0))
-                  (=stop (if s1 s1 s0))
-                  (=step step)))
+      (init-state (curr (if s1 s0 0)) (stop (if s1 s1 s0)) step))
 
-  (if (or (and (> =step 0) (< =curr =stop))
-          (and (< =step 0) (> =curr =stop)))
-      (prog1 =curr (incf =curr =step))
+  (if (or (and (> step 0) (< curr stop))
+          (and (< step 0) (> curr stop)))
+      (prog1 curr (incf curr step))
       (error 'stop-iteration)))
 
-(def-iter iterator-icount (curr =step)
+(def-iter iterator-icount (curr step)
     (icount (start step)
-      (init-state (curr start) (=step step)))
-  (prog1 curr (incf curr =step)))
+      (init-state (curr start) step))
+  (prog1 curr (incf curr step)))
 
-(def-iter iterator-repeat (max curr =item)
+(def-iter iterator-repeat (max curr item)
     (repeat (item &optional max-repeats)
-      (init-state (=item item) (max max-repeats) (curr 0)))
+      (init-state item (max max-repeats) (curr 0)))
   (if max
         (if (< curr max)
-            (progn (incf curr) =item)
+            (progn (incf curr) item)
             (error 'stop-iteration))
-        =item))
+        item))
 
 (def-iter iterator-cycle (base-iter stopped results tail)
     (cycle (iterlike)
@@ -94,9 +92,9 @@
               (self)
               item)))
 
-(def-iter iterator-starmap (base-iter =fn)
+(def-iter iterator-starmap (base-iter fn)
     (starmap (iterlike fn)
-      (init-state (base-iter (make-iterator iterlike)) (=fn fn)))
+      (init-state (base-iter (make-iterator iterlike)) fn))
   (apply fn (iter-to-list (next base-iter))))
 
 ;; TODO zip_longest
@@ -109,12 +107,12 @@
         item
         (error 'stop-iteration))))
 
-(def-iter _ (base-iter =start =stop =delta curr)
+(def-iter _ (base-iter start stop delta curr)
     (islice (iterlike start stop delta)
             (unless (and (>= start 0) (>= stop 0) (> delta 0))
               (error (format nil "Args must all be positive~%")))
             (init-state (base-iter (make-iterator iterlike))
-                        (=start start) (=stop stop) (=delta delta)
+                        start stop delta
                         (curr 0)))
     (if (< curr start)
         (progn (loop for _ below start
@@ -130,12 +128,12 @@
                    (setf el (next base-iter))
               finally (return el))))
 
-(def-iter _ (=q base-iter)
+(def-iter _ (q base-iter)
     (tee-item (iterlike q)
-      (init-state (base-iter (make-iterator iterlike)) (=q q)))
-  (when (null (cdr =q))
-    (setf (cdr =q) (cons (next base-iter) nil)))
-  (setf =q (cdr =q)) (car =q))
+      (init-state (base-iter (make-iterator iterlike)) q))
+  (when (null (cdr q))
+    (setf (cdr q) (cons (next base-iter) nil)))
+  (setf q (cdr q)) (car q))
 
 (defun tee (iterlike &optional (n 2))
   (let ((base-iter (make-iterator iterlike))

@@ -2,7 +2,7 @@
 
 (defpackage #:picl
   (:use #:cl)
-  (:local-nicknames (#:dcl #:defclass-std) (#:an #:anaphora))
+  (:local-nicknames (#:dcl #:defclass-std) (#:alx #:alexandria))
   (:export
    ;; Interface
    #:next
