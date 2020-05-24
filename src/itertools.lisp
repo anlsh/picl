@@ -1,5 +1,15 @@
 (in-package :picl)
 
+;; A macro with which to define iterables: the idea being that I can switch what it
+;; produces from raw function representation (which is what it currently implements)
+;; to generic dispatch based (what is currently used throughout the code)
+;;
+;; Not sure how useful it's going to be tbh: it's anaphoric, and plus whenever a state
+;; variables has the same name as a constructor argument one (probably the state variable.
+;; since it's not user-facing) will have to be mangled
+;;
+;; I also don't want to make users use this, so the representation will probably have
+;; to be nailed down before initial release anyways
 (defmacro def-iter (name state-vars (constructor-name constructor-params &body cons-body)
                     &body next-body)
   (declare (ignore name))
@@ -181,6 +191,10 @@
               item))))
 
 ;; TODO groupby
+
+;; TODO starmap
+
+;; TODO zip_longest
 
 ;; takewhile
 (dcl:defclass/std iterator-takewhile (iterator)

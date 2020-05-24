@@ -47,6 +47,28 @@ nicknames]((https://gist.github.com/phoe/2b63f33a2a4727a437403eceb7a6b4a3))
 instead. Even better, include a similar disclaimer in any new CL package you
 release and stop `:use`ing things in your own code.
 
+### To-do before release
+
+- Implement the remaining itertools functions: groupby, starmap, zip_longest
+[ez but boring]
+- Clean up code: name arguments to functions so that they're consistent, figure
+out how to handle optional parameters, etc
+- Nail down the representation for iterators: lambdas or classes specializing
+the "next" function
+- Specialize the make-iterator function for arrays
+- General proofreading and code review
+
+### Lower-priority to-dos (mb after release)
+- Port the more-itertools recipes found at bottom of the Python itertools
+package
+- Port the [more-iterools](https://pypi.org/project/more-itertools/) package
+(this might be a big job)
+
+### Acknowledgements
+
+Python, its itertools package, and all those who have contributed to it:
+without whom this package would not exist
+
 ## License
 
 MIT
