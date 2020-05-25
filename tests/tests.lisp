@@ -53,9 +53,9 @@
 
 (f:def-test test/islice ()
   (f:is (iter-makes (range 10 20 2)
-                    (islice (icount 0 1) 10 20 2)))
+                    (islice (icount) 10 20 2)))
   (f:is (iter-makes (range 113 257 7)
-                    (islice (icount 0 1) 113 257 7))))
+                    (islice (icount) 113 257 7))))
 
 (f:def-test test/compress ()
   (f:is (iter-makes '(1 2 3 4 5 6)

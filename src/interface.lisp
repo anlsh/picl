@@ -8,5 +8,3 @@
 
 (defun next (iterator)
   (funcall iterator))
-
-(define-condition stop-iteration (simple-error) ())

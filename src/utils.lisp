@@ -27,8 +27,10 @@
 ;; Utilities
 (defun iter-to-list (iterlike)
   (labels ((rec (iterator)
-             (handler-case (cons (next iterator) (iter-to-list iterator))
-               (stop-iteration () nil))))
+             (multiple-value-bind (base-item base-alive) (next iterator)
+               (if base-alive
+                   (cons base-item (iter-to-list iterator))
+                   nil))))
     (rec (make-iterator iterlike))))
 
 (defun iter-to-vec (iterlike)
@@ -40,9 +42,9 @@
 
 ;; take-n (not in "core" itertools but very nice for testing)
 (defun take-n (n iterlike)
-  (let ((iterator (make-iterator iterlike)))
-    (loop for i below n
-          collecting (handler-case (next iterator)
-                       (stop-iteration () (return a)))
-            into a
-          finally (return a))))
+  (loop with iterator = (make-iterator iterlike)
+        for i below n
+        for (base-item base-alive) = (multiple-value-list (next iterator))
+        while base-alive
+        collecting base-item into ls
+        finally (return ls)))

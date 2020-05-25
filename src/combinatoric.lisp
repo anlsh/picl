@@ -23,23 +23,24 @@
                            (init-state item-vec
                                        lengths
                                        (indices (make-array (length item-vec)
-                                                             :initial-element 0)))))))
+                                                            :initial-element 0)))))))
   (if stopped
-        (error 'stop-iteration)
-        (prog1 (loop with product = (make-array (length indices))
-                     for i below (length product)
-                     for ii = (aref indices i)
-                     do (setf (aref product i) (aref (aref item-vec i) ii))
-                     finally (return product))
-          (labels ((next-combo (i)
-                     (if (< i 0)
-                         (setf stopped t)
-                         (progn
-                           (incf (aref indices i))
-                           (when (>= (aref indices i) (aref lengths i))
-                             (setf (aref indices i) 0)
-                             (next-combo (1- i)))))))
-            (next-combo (1- (length indices)))))))
+      (values nil nil)
+      (multiple-value-prog1
+          (loop with product = (make-array (length indices))
+                for i below (length product)
+                for ii = (aref indices i)
+                do (setf (aref product i) (aref (aref item-vec i) ii))
+                finally (return (values product t)))
+        (labels ((next-combo (i)
+                   (if (< i 0)
+                       (setf stopped t)
+                       (progn
+                         (incf (aref indices i))
+                         (when (>= (aref indices i) (aref lengths i))
+                           (setf (aref indices i) 0)
+                           (next-combo (1- i)))))))
+          (next-combo (1- (length indices)))))))
 
 ;; Permutations
 
@@ -55,11 +56,12 @@
                         (indices (iter-to-vec (range 0 (length ivec) 1)))
                         (cycles (iter-to-vec (range n (- n r) -1)))))))
   (if stopped
-      (error 'stop-iteration)
-      (prog1 (loop with ret = (make-array r)
-                   for i below r
-                   do (setf (aref ret i) (aref pool (aref indices i)))
-                   finally (return ret))
+      (values nil nil)
+      (multiple-value-prog1
+          (loop with ret = (make-array r)
+                for i below r
+                do (setf (aref ret i) (aref pool (aref indices i)))
+                finally (return (values ret t)))
         (loop for i from (1- r) downto 0
               do (decf (aref cycles i))
                  (if (zerop (aref cycles i))
@@ -84,18 +86,20 @@
                         (indices (iter-to-vec (range 0 r 1)))))))
 
   ;; TODO Strictly speaking, this should return a set
-  (when stopped (error 'stop-iteration))
-  (prog1 (loop with ret-vec = (make-array r)
-                 for i below r
-                 do (setf (aref ret-vec i) (aref pool (aref indices i)))
-                 finally (return ret-vec))
-      (loop for i from (1- r) downto 0
-            when (/= (aref indices i) (+ i n (- r)))
-              do (incf (aref indices i))
-                 (loop for j from (1+ i) to (1- r)
-                       do (setf (aref indices j) (1+ (aref indices (1- j)))))
-                 (return)
-            finally (setf stopped t))))
+  (if stopped
+      (values nil nil)
+      (multiple-value-prog1
+          (loop with ret-vec = (make-array r)
+                for i below r
+                do (setf (aref ret-vec i) (aref pool (aref indices i)))
+                finally (return (values ret-vec t)))
+        (loop for i from (1- r) downto 0
+              when (/= (aref indices i) (+ i n (- r)))
+                do (incf (aref indices i))
+                   (loop for j from (1+ i) to (1- r)
+                         do (setf (aref indices j) (1+ (aref indices (1- j)))))
+                   (return)
+              finally (setf stopped t)))))
 
 (def-iter iterator-combinations-with-rep (indices pool stopped r n)
 
@@ -107,16 +111,18 @@
                     (indices (iter-to-vec (repeat 0 r))))))
 
   ;; TODO Strictly speaking, this should return a multiset
-  (when stopped (error 'stop-iteration))
-  (prog1 (loop with ret-vec = (make-array r)
-               for i below r
-               do (setf (aref ret-vec i) (aref pool (aref indices i)))
-               finally (return ret-vec))
-    (loop for i from (1- r) downto 0
-          when (/= (aref indices i) (1- n))
-            do
-               (loop for j from i below r
-                     with el = (1+ (aref indices i))
-                     do (setf (aref indices j) el))
-               (return)
-          finally (setf stopped t))))
+  (if stopped
+      (values nil nil)
+      (multiple-value-prog1
+          (loop with ret-vec = (make-array r)
+                for i below r
+                do (setf (aref ret-vec i) (aref pool (aref indices i)))
+                finally (return (values ret-vec t)))
+        (loop for i from (1- r) downto 0
+              when (/= (aref indices i) (1- n))
+                do
+                   (loop for j from i below r
+                         with el = (1+ (aref indices i))
+                         do (setf (aref indices j) el))
+                   (return)
+              finally (setf stopped t)))))

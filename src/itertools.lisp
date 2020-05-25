@@ -7,37 +7,39 @@
 
   (if (or (and (> step 0) (< curr stop))
           (and (< step 0) (> curr stop)))
-      (prog1 curr (incf curr step))
-      (error 'stop-iteration)))
+      (values (prog1 curr (incf curr step)) t)
+      (values nil nil)))
 
 (def-iter iterator-icount (curr step)
-    (icount (start step)
+    (icount (&optional (start 0) (step 1))
       (init-state (curr start) step))
-  (prog1 curr (incf curr step)))
+  (values (prog1 curr (incf curr step)) t))
 
 (def-iter iterator-repeat (max curr item)
     (repeat (item &optional max-repeats)
       (init-state item (max max-repeats) (curr 0)))
   (if max
         (if (< curr max)
-            (progn (incf curr) item)
-            (error 'stop-iteration))
-        item))
+            (values (progn (incf curr) item) t)
+            (values nil nil))
+        (values item t)))
 
 (def-iter iterator-cycle (base-iter stopped results tail)
     (cycle (iterlike)
       (init-state (base-iter (make-iterator iterlike))))
   (if stopped
-        (prog1 (car tail) (setf tail (or (cdr tail) results)))
-        (handler-case
-            (progn (push (next base-iter) results) (car results))
-          (stop-iteration ()
-            (unless results (error 'stop-iteration))
-            (setf base-iter nil
-                  stopped t
-                  results (nreverse results)
-                  tail results)
-            (self)))))
+      (values (prog1 (car tail) (setf tail (or (cdr tail) results)))
+              t)
+      (multiple-value-bind (next-item base-alive) (next base-iter)
+        (if base-alive
+            (values (progn (push next-item results) (car results)) t)
+            (if results
+                (progn (setf base-iter nil
+                             stopped t
+                             results (nreverse results)
+                             tail results)
+                       (self))
+                (values nil nil))))))
 
 
 ;; Accumulate
@@ -46,15 +48,24 @@
 ;; Also this is halfway to being useless, CL has reduce
 
 ;; Chains
+(def-iter iterator-chain-from-iter (curr-iter itail)
 
-(def-iter iterator-chain-from-iter (itail)
-    (chain-from-iter (it-of-its)
-      (init-state (itail (make-iterator it-of-its))))
-  (unless itail (setf itail (make-iterator (next itail))))
-  (handler-case (next itail)
-    (stop-iteration ()
-      (setf itail (make-iterator (next itail)))
-      (self))))
+    (chain-from-iter (itl-of-itls)
+      (let ((itl-of-itls (make-iterator itl-of-itls)))
+        (multiple-value-bind (curr-iter its-alive) (next itl-of-itls)
+          (if its-alive
+              (init-state (curr-iter (make-iterator curr-iter))
+                          (itail itl-of-itls))
+              (empty-iterator)))))
+
+  (multiple-value-bind (curr-item curr-alive) (next curr-iter)
+    (if curr-alive
+        (values curr-item t)
+        (progn (multiple-value-bind (next-iter itail-alive) (next itail)
+                 (if itail-alive
+                     (progn (setf curr-iter (make-iterator next-iter))
+                            (self))
+                     (values nil nil)))))))
 
 (defun chain (&rest args)
   (chain-from-iter args))
@@ -65,10 +76,13 @@
     (compress (base-iterlike bool-iterlike)
       (init-state (base-iter (make-iterator base-iterlike))
                   (bool-iter (make-iterator bool-iterlike))))
-  (let ((curr-item (next base-iter)))
-      (if (next bool-iter)
-          curr-item
-          (self))))
+  (multiple-value-bind (curr-item curr-alive) (next base-iter)
+    (multiple-value-bind (bool-item bool-alive) (next bool-iter)
+      (if (and curr-alive bool-alive)
+          (if bool-item
+              (values curr-item t)
+              (self))
+          (values nil nil)))))
 
 ;; Dropwhile
 
@@ -76,64 +90,83 @@
     (dropwhile (predicate iterlike)
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
   (if been-false
-        (next base-iter)
-        (let ((item (next base-iter)))
-          (if (funcall pred item)
-              (self)
-              (progn (setf been-false t)
-                     item)))))
+      (next base-iter)
+      (multiple-value-bind (item base-alive) (next base-iter)
+        (if base-alive
+            (if (funcall pred item)
+                (self)
+                (progn (setf been-false t)
+                       (values item t)))
+            (values nil nil)))))
 
 ;; Filterfalse
 (def-iter iterator-filterfalse (base-iter pred)
     (filterfalse (predicate iterlike)
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
-  (let ((item (next base-iter)))
-      (if (not (funcall pred item))
-              (self)
-              item)))
+  (multiple-value-bind (base-item base-alive) (next base-iter)
+    (if base-alive
+        (if (funcall pred base-item)
+              (values base-item t)
+              (self))
+        (values nil nil))))
 
 (def-iter iterator-starmap (base-iter fn)
-    (starmap (iterlike fn)
+    (starmap (fn iterlike)
       (init-state (base-iter (make-iterator iterlike)) fn))
-  (apply fn (iter-to-list (next base-iter))))
+  (multiple-value-bind (base-item base-alive) (next base-iter)
+    (if base-alive
+        (values (apply fn (iter-to-list base-item)) t)
+        (values nil nil))))
 
 ;; TODO zip_longest
 
-(def-iter iterator-takewhile (base-iter pred)
+(def-iter iterator-takewhile (base-iter pred been-false)
     (takewhile (predicate iterlike)
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
-  (let ((item (next base-iter)))
-    (if (funcall pred item)
-        item
-        (error 'stop-iteration))))
+  (if been-false
+      (values nil nil)
+      (multiple-value-bind (base-item base-alive) (next base-iter)
+        (if base-alive
+            (values base-item (funcall pred base-item))
+            (values nil nil)))))
 
 (def-iter iterator-islice (base-iter start stop delta curr)
     (islice (iterlike start stop delta)
-            (unless (and (>= start 0) (>= stop 0) (> delta 0))
-              (error (format nil "Args must all be positive~%")))
-            (init-state (base-iter (make-iterator iterlike))
-                        start stop delta
-                        (curr 0)))
-    (if (< curr start)
-        (progn (loop for _ below start
-                     do (incf curr)
-                        (next base-iter))
-               (if (< curr stop)
-                   (progn (incf curr) (next base-iter))
-                   (error 'stop-iteration)))
-        (loop for i below delta
-              with el
-              when (>= curr stop) do (error 'stop-iteration)
-                do (incf curr)
-                   (setf el (next base-iter))
-              finally (return el))))
+      (unless (and (>= start 0) (>= stop 0) (> delta 0))
+        (error (format nil "Args must all be positive~%")))
+      (init-state (base-iter (make-iterator iterlike))
+                  start stop delta
+                  (curr 0)))
+  (if (< curr start)
+      (progn (loop for _ below start
+                   for (__ base-alive) = (multiple-value-list (next base-iter))
+                   when (not base-alive)
+                     do (return-from self (values nil nil))
+                   do (incf curr))
+             (when (< curr stop)
+               (incf curr)
+               (next base-iter)))
+      (loop with base-item
+            with base-alive = t
+
+            for i below delta
+            do
+               (when (or (not base-alive) (>= curr stop))
+                 (return (values nil nil)))
+               (multiple-value-setq (base-item base-alive)
+                 (next base-iter))
+               (incf curr)
+            finally (return-from self (values base-item t)))))
 
 (def-iter iterator-tee-item (q base-iter)
     (tee-item (iterlike q)
       (init-state (base-iter (make-iterator iterlike)) q))
-  (when (null (cdr q))
-    (setf (cdr q) (cons (next base-iter) nil)))
-  (setf q (cdr q)) (car q))
+  (if (null (cdr q))
+      (multiple-value-bind (base-item base-alive) (next base-iter)
+        (if base-alive
+            (progn (setf (cdr q) (list base-item)))
+            (return-from self (values nil nil)))))
+  (setf q (cdr q)) (values (car q) t))
 
 (defun tee (iterlike &optional (n 2))
   (let ((base-iter (make-iterator iterlike))
