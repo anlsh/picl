@@ -17,8 +17,13 @@
    #:icount
    #:islice
    #:chain
+   #:compress
    #:cycle
    #:repeat
+   #:dropwhile
+   #:takewhile
+   #:starmap
+   #:filterfalse
    #:permutations
    #:combinations
    #:combinations-with-rep
