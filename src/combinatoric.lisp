@@ -7,7 +7,7 @@
 ;; Product
 ;; TODO It's missing the functionality of "repeat" argument
 
-(def-iter _ (item-vec indices lengths stopped)
+(def-iter iterator-product (item-vec indices lengths stopped)
 
     (product (&rest iterlikes)
       (loop with item-vec = (make-array (length iterlikes))
@@ -43,7 +43,7 @@
 
 ;; Permutations
 
-(def-iter _ (r n pool indices stopped cycles)
+(def-iter iterator-permutations (r n pool indices stopped cycles)
 
     (permutations (iterlike &optional r)
       (let* ((ivec (iter-to-vec iterlike))
@@ -74,7 +74,7 @@
               finally (setf stopped t)))))
 
 ;; Combinations
-(def-iter _ (indices pool stopped r n)
+(def-iter iterator-combinations (indices pool stopped r n)
 
     (combinations (iterlike r)
       (let ((ivec (iter-to-vec iterlike)))
@@ -97,7 +97,7 @@
                  (return)
             finally (setf stopped t))))
 
-(def-iter _ (indices pool stopped r n)
+(def-iter iterator-combinations-with-rep (indices pool stopped r n)
 
     (combinations-with-rep (iterlike r)
       (let ((pool (iter-to-vec iterlike)))
@@ -106,17 +106,17 @@
                     (pool pool)
                     (indices (iter-to-vec (repeat 0 r))))))
 
-;; TODO Strictly speaking, this should return a multiset
+  ;; TODO Strictly speaking, this should return a multiset
   (when stopped (error 'stop-iteration))
   (prog1 (loop with ret-vec = (make-array r)
-                 for i below r
-                 do (setf (aref ret-vec i) (aref pool (aref indices i)))
-                 finally (return ret-vec))
-      (loop for i from (1- r) downto 0
-            when (/= (aref indices i) (1- n))
-              do
-                 (loop for j from i below r
-                       with el = (1+ (aref indices i))
-                       do (setf (aref indices j) el))
-                 (return)
-            finally (setf stopped t))))
+               for i below r
+               do (setf (aref ret-vec i) (aref pool (aref indices i)))
+               finally (return ret-vec))
+    (loop for i from (1- r) downto 0
+          when (/= (aref indices i) (1- n))
+            do
+               (loop for j from i below r
+                     with el = (1+ (aref indices i))
+                     do (setf (aref indices j) el))
+               (return)
+          finally (setf stopped t))))

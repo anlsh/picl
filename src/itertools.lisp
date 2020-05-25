@@ -99,7 +99,7 @@
 
 ;; TODO zip_longest
 
-(def-iter _ (base-iter pred)
+(def-iter iterator-takewhile (base-iter pred)
     (takewhile (predicate iterlike)
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
   (let ((item (next base-iter)))
@@ -107,7 +107,7 @@
         item
         (error 'stop-iteration))))
 
-(def-iter _ (base-iter start stop delta curr)
+(def-iter iterator-islice (base-iter start stop delta curr)
     (islice (iterlike start stop delta)
             (unless (and (>= start 0) (>= stop 0) (> delta 0))
               (error (format nil "Args must all be positive~%")))
@@ -128,7 +128,7 @@
                    (setf el (next base-iter))
               finally (return el))))
 
-(def-iter _ (q base-iter)
+(def-iter iterator-tee-item (q base-iter)
     (tee-item (iterlike q)
       (init-state (base-iter (make-iterator iterlike)) q))
   (when (null (cdr q))
