@@ -24,6 +24,7 @@
    #:dropwhile
    #:takewhile
    #:starmap
+   #:filter
    #:filterfalse
    #:permutations
    #:combinations

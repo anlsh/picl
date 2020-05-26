@@ -10,23 +10,32 @@
       (values (prog1 curr (incf curr step)) t)
       (values nil nil)))
 
+
 (def-iter iterator-icount (curr step)
+
     (icount (&optional (start 0) (step 1))
       (init-state (curr start) step))
+
   (values (prog1 curr (incf curr step)) t))
 
+
 (def-iter iterator-repeat (max curr item)
+
     (repeat (item &optional max-repeats)
       (init-state item (max max-repeats) (curr 0)))
+
   (if max
-        (if (< curr max)
-            (values (progn (incf curr) item) t)
-            (values nil nil))
-        (values item t)))
+      (if (< curr max)
+          (values (progn (incf curr) item) t)
+          (values nil nil))
+      (values item t)))
+
 
 (def-iter iterator-cycle (base-iter stopped results tail)
+
     (cycle (iterlike)
       (init-state (base-iter (make-iterator iterlike))))
+
   (if stopped
       (values (prog1 (car tail) (setf tail (or (cdr tail) results)))
               t)
@@ -41,9 +50,12 @@
                        (self))
                 (values nil nil))))))
 
+
 (def-iter iterator-cycle (base-iter stopped results tail)
+
     (cycle (iterlike)
       (init-state (base-iter (make-iterator iterlike))))
+
   (if stopped
       (values (prog1 (car tail) (setf tail (or (cdr tail) results)))
               t)
@@ -57,8 +69,10 @@
                              tail results)
                        (self))
                 (values nil nil))))))
+
 
 (def-iter iterator-zip-longest (iterator-vec fill-item n num-active active-vec)
+
     (zip-longest-from-itl (itl-of-itls &optional fill-item)
       (let* ((itl-of-itls (iter-to-vec itl-of-itls))
              (num-active (length itl-of-itls)))
@@ -70,6 +84,7 @@
             (init-state (iterator-vec itl-of-itls) (n num-active) num-active fill-item
                         ;; TODO Maybe this should be a vit vector?
                         (active-vec (make-array num-active :initial-element t))))))
+
   (loop with ret-vec = (make-array n)
         for i below n
         do (if (aref active-vec i)
@@ -86,6 +101,7 @@
 
 (defun zip-longest (fill-item &rest iterlikes)
   (zip-longest-from-itl iterlikes fill-item))
+
 
 (def-iter iterator-chain-from-iter (curr-iter itail)
 
@@ -109,12 +125,13 @@
 (defun chain (&rest args)
   (chain-from-iter args))
 
-;; Compress
 
 (def-iter iterator-compress (base-iter bool-iter)
+
     (compress (base-iterlike bool-iterlike)
       (init-state (base-iter (make-iterator base-iterlike))
                   (bool-iter (make-iterator bool-iterlike))))
+
   (multiple-value-bind (curr-item curr-alive) (next base-iter)
     (multiple-value-bind (bool-item bool-alive) (next bool-iter)
       (if (and curr-alive bool-alive)
@@ -123,11 +140,12 @@
               (self))
           (values nil nil)))))
 
-;; Dropwhile
 
 (def-iter iterator-dropwhile (base-iter pred been-false)
+
     (dropwhile (predicate iterlike)
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
+
   (if been-false
       (next base-iter)
       (multiple-value-bind (item base-alive) (next base-iter)
@@ -138,10 +156,11 @@
                        (values item t)))
             (values nil nil)))))
 
-;; Filterfalse
-(def-iter iterator-filterfalse (base-iter pred)
-    (filterfalse (predicate iterlike)
+(def-iter iterator-filter (base-iter pred)
+
+    (filter (predicate iterlike)
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
+
   (multiple-value-bind (base-item base-alive) (next base-iter)
     (if base-alive
         (if (funcall pred base-item)
@@ -149,19 +168,26 @@
               (self))
         (values nil nil))))
 
+(defun filterfalse (predicate iterlike)
+  (filter (lambda (x) (not (funcall predicate x))) iterlike))
+
+
 (def-iter iterator-starmap (base-iter fn)
+
     (starmap (fn iterlike)
       (init-state (base-iter (make-iterator iterlike)) fn))
+
   (multiple-value-bind (base-item base-alive) (next base-iter)
     (if base-alive
         (values (apply fn (iter-to-list base-item)) t)
         (values nil nil))))
 
-;; TODO zip_longest
 
 (def-iter iterator-takewhile (base-iter pred been-false)
+
     (takewhile (predicate iterlike)
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
+
   (if been-false
       (values nil nil)
       (multiple-value-bind (base-item base-alive) (next base-iter)
@@ -169,13 +195,16 @@
             (values base-item (funcall pred base-item))
             (values nil nil)))))
 
+
 (def-iter iterator-islice (base-iter start stop delta curr)
+
     (islice (iterlike start stop delta)
       (unless (and (>= start 0) (>= stop 0) (> delta 0))
         (error (format nil "Args must all be positive~%")))
       (init-state (base-iter (make-iterator iterlike))
                   start stop delta
                   (curr 0)))
+
   (if (< curr start)
       (progn (loop for _ below start
                    for (__ base-alive) = (multiple-value-list (next base-iter))
@@ -197,9 +226,12 @@
                (incf curr)
             finally (return-from self (values base-item t)))))
 
+
 (def-iter iterator-tee-item (q base-iter)
+
     (tee-item (iterlike q)
       (init-state (base-iter (make-iterator iterlike)) q))
+
   (if (null (cdr q))
       (multiple-value-bind (base-item base-alive) (next base-iter)
         (if base-alive

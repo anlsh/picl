@@ -40,8 +40,8 @@
 (defun empty-iterator ()
   (make-iterator nil))
 
-;; take-n (not in "core" itertools but very nice for testing)
-(defun take-n (n iterlike)
+;; take (not in "core" itertools but very nice for testing)
+(defun take (n iterlike)
   (loop with iterator = (make-iterator iterlike)
         for i below n
         for (base-item base-alive) = (multiple-value-list (next iterator))

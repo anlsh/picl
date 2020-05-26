@@ -61,7 +61,7 @@ new CL packages you release and stop `:use`ing things going forward.
 
 ### To-do before release
 
-- Implement the remaining itertools functions: groupby, zip_longest
+- Implement groupby
 - Decide how to handle multi-dimensional arrays
 - Provide a driver for ITERATE
 - Arrays vs lists
@@ -71,6 +71,7 @@ on `generic-cl` for its `reduce` function)
 - Code review
 
 ### Lower-priority to-dos (mb after release)
+- Implement Python's default functions for working with iterables (map, zip, etc)
 - Port the more-itertools recipes found at bottom of the Python itertools
 package
 - Port the [more-iterools](https://pypi.org/project/more-itertools/) package
