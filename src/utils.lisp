@@ -48,3 +48,24 @@
         while base-alive
         collecting base-item into ls
         finally (return ls)))
+
+
+(def-iter iterator-enumerate (iterator curr)
+    (enumerate (iterlike &optional (curr 0))
+      (init-state (iterator (make-iterator iterlike)) curr))
+  (multiple-value-bind (item alive) (next iterator)
+    (if alive
+        ;; TODO Consings is maybe no tthe best solution?
+        (multiple-value-prog1 (values (cons curr item) t) (incf curr))
+        (values nil nil))))
+
+;; TODO Tests
+;; (def-iter iterator-map (iterator pred)
+;;     (enumerate (pred iterlike)
+;;       (init-state (iterator (make-iterator iterlike)) pred))
+;;   (multiple-value-bind (item alive) (next iterator)
+;;     (if alive
+;;         (values (funacll pred item) t)
+;;         (values nil nil))))
+(defun imap (pred &rest iterlikes)
+  (starmap pred (apply #'zip iterlikes)))
