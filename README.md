@@ -10,13 +10,11 @@ have attempted something similar. I am aware of
 
 Unfortunately, both have shortcomings. `cl-itertools` is incomplete,
 and `snakes` relies on `cl-cont` meaning that it won't necessarily play nice
-with the condition system (or so I'm told: I know next to nothing about either,
+with the condition system (or so I hear: I know next to nothing about either,
 to be honest).
 
-My hope is actually to *reduce* fragmentation of the Common Lisp ecosystem by
-creating this package. My current approach is to rip off what Python's
-interface, which consists of `__iter__`, `__next__`, and a`StopIteration`
-exception.
+My hope is to reduce fragmentation of the Common Lisp ecosystem by
+providing a standard interface to and set of tools for working with streams.
 
 Correctness and extensibility will be prioritized over speed, but I'm not
 looking to write a library for snails either. Once an initial release is up and
@@ -27,36 +25,43 @@ memory-efficient.
 Pull requests and feedback (concerning anything, such as the defragmentation
 goal) are welcome.
 
+### Interface
+
+This project implements utilities for working with streams. The interface
+is as follows. A stream is any function emitting two values, where the first
+is the item of relevance and the second is a boolean indicating whether the
+stream is alive. If the alive-indicator is `nil`, then the `item` is ignored.
+
+As an example, an iterator over `'(1 2)'` produces
+`1, t` then` 2, t` then `nil, nil`: *not* `1, t` then `2, nil`
+
+Once a stream has indicated that it is dead, all further calls should also
+indicate likewise.
+
 ### Stability
 
-For the time being, this project's interface is very much unstable: even the
-package name might change (it seems a little cutesy to me. Then again, maybe
-that's not such a bad thing) Hopefully it won't be this way for long: if you
-would like to see it evolve in a certain direction, feel free to create an issue
-or PR.
+This project is currently unreleased so I won't garuntee stability just yet:
+it's not far off though.
 
 ### A note on `:use`
 
 This is a new library, and so I have the liberty to tell you this: do not, and I
-mean *do not* `:use` this package. Even after the library becomes stable I
-might want to add functionality involving exporting new symbols and I absolutely
-do not care about accomodating the use of `:use`.
+mean *do not* `:use` this package. This library might export new symbols in the
+future, and I do not care about accomodating the use of `:use`.
 
-Use [package local
+Use a [package local
 nicknames]((https://gist.github.com/phoe/2b63f33a2a4727a437403eceb7a6b4a3))
-instead. Even better, include a similar disclaimer in any new CL package you
-release and stop `:use`ing things in your own code.
+instead. It would also be cool if you could include similar disclaimers in any
+new CL packages you release and stop `:use`ing things going forward.
 
 ### To-do before release
 
-- Implement the remaining itertools functions: groupby, starmap, zip_longest
-[ez but boring]
-- Clean up code: name arguments to functions so that they're consistent, figure
-out how to handle optional parameters, etc
-- Nail down the representation for iterators: lambdas or classes specializing
-the "next" function
-- Specialize the make-iterator function for arrays
-- General proofreading and code review
+- Implement the remaining itertools functions: groupby, zip_longest
+- Provide a driver for ITERATE
+- Figure out how to handle `accumulate`(possibly involving a dependency
+on `generic-cl` for its `reduce` function)
+- Documentation
+- Code review
 
 ### Lower-priority to-dos (mb after release)
 - Port the more-itertools recipes found at bottom of the Python itertools
@@ -71,4 +76,4 @@ without whom this package would not exist
 
 ## License
 
-MIT
+This project is provided under the MIT License (see LICENSE.md)
