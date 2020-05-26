@@ -14,7 +14,7 @@
                  (:file "utils" :depends-on ("interface"))
                  (:file "itertools" :depends-on ("utils"))
                  (:file "combinatoric" :depends-on ("utils"))
-                 (:module "iterator-impls/" :depends-on ("utils")
+                 (:module "iterator-impls" :depends-on ("utils")
                   :components
                   ((:file "list")))
                  (:file "picl" :depends-on ("package"))))))

@@ -1,14 +1,15 @@
 (in-package :picl-tests)
 (f:in-suite picl-test-suite)
 
-(defun iter-makes (i0 i1)
-  (equalp (iter-to-list (make-iterator i0))
-          (iter-to-list (make-iterator i1))))
-
 (f:def-test test/list-iterator ()
   (let ((ls1 '(1 2 3 4)))
     (f:is (iter-makes ls1 ls1))
     (f:is (iter-makes nil nil))))
+
+(f:def-test test/vector-iterator ()
+  (f:is (iter-makes #(1 2 3 4 5)
+                    '(1 2 3 4 5)))
+  (f:is (iter-makes #() nil)))
 
 (f:def-test test/empty-iterator ()
   (f:is (iter-makes nil nil)))
