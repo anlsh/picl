@@ -16,6 +16,7 @@
    #:range
    #:icount
    #:islice
+   #:zip-longest
    #:chain
    #:compress
    #:cycle

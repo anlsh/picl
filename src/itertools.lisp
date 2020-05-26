@@ -41,13 +41,52 @@
                        (self))
                 (values nil nil))))))
 
+(def-iter iterator-cycle (base-iter stopped results tail)
+    (cycle (iterlike)
+      (init-state (base-iter (make-iterator iterlike))))
+  (if stopped
+      (values (prog1 (car tail) (setf tail (or (cdr tail) results)))
+              t)
+      (multiple-value-bind (next-item base-alive) (next base-iter)
+        (if base-alive
+            (values (progn (push next-item results) (car results)) t)
+            (if results
+                (progn (setf base-iter nil
+                             stopped t
+                             results (nreverse results)
+                             tail results)
+                       (self))
+                (values nil nil))))))
 
-;; Accumulate
-;; TODO This is missing the functionality for special handling of function arguments
-;; also, it would be good to fold this library into generic-cl/itertools somehow
-;; Also this is halfway to being useless, CL has reduce
+(def-iter iterator-zip-longest (iterator-vec fill-item n num-active active-vec)
+    (zip-longest-from-itl (itl-of-itls &optional fill-item)
+      (let* ((itl-of-itls (iter-to-vec itl-of-itls))
+             (num-active (length itl-of-itls)))
+        (loop for i below num-active
+              do (setf (aref itl-of-itls i)
+                       (make-iterator (aref itl-of-itls i))))
+        (if (zerop num-active)
+            (empty-iterator)
+            (init-state (iterator-vec itl-of-itls) (n num-active) num-active fill-item
+                        ;; TODO Maybe this should be a vit vector?
+                        (active-vec (make-array num-active :initial-element t))))))
+  (loop with ret-vec = (make-array n)
+        for i below n
+        do (if (aref active-vec i)
+               (multiple-value-bind (iter-item iter-alive) (next (aref iterator-vec i))
+                 (if iter-alive
+                     (setf (aref ret-vec i) iter-item)
+                     (progn (decf num-active)
+                            (setf (aref active-vec i) nil)
+                            (setf (aref ret-vec i) fill-item))))
+               (setf (aref ret-vec i) fill-item))
+        finally (return (if (zerop num-active)
+                            (values nil nil)
+                            (values ret-vec t)))))
 
-;; Chains
+(defun zip-longest (fill-item &rest iterlikes)
+  (zip-longest-from-itl iterlikes fill-item))
+
 (def-iter iterator-chain-from-iter (curr-iter itail)
 
     (chain-from-iter (itl-of-itls)

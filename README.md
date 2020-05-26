@@ -27,16 +27,21 @@ goal) are welcome.
 
 ### Interface
 
-This project implements utilities for working with streams. The interface
-is as follows. A stream is any function emitting two values, where the first
+This project implements utilities for working with streams.
+A stream is any function emitting two values, where the first
 is the item of relevance and the second is a boolean indicating whether the
-stream is alive. If the alive-indicator is `nil`, then the `item` is ignored.
-
-As an example, an iterator over `'(1 2)'` produces
-`1, t` then` 2, t` then `nil, nil`: *not* `1, t` then `2, nil`
+stream is alive^1. If the alive-indicator is `nil`, then the `item` is ignored.
 
 Once a stream has indicated that it is dead, all further calls should also
 indicate likewise.
+
+If you'd like to use this library to iterate over a certain type of object,
+specialize the `make-iterator` function to produce an appropriate stream.
+
+#### Example
+1. As an example, an iterator over `'(1 2)'` produces
+`1, t` then` 2, t` then `nil, nil`: *not* `1, t` then `2, nil`
+
 
 ### Stability
 
@@ -57,7 +62,9 @@ new CL packages you release and stop `:use`ing things going forward.
 ### To-do before release
 
 - Implement the remaining itertools functions: groupby, zip_longest
+- Decide how to handle multi-dimensional arrays
 - Provide a driver for ITERATE
+- Arrays vs lists
 - Figure out how to handle `accumulate`(possibly involving a dependency
 on `generic-cl` for its `reduce` function)
 - Documentation

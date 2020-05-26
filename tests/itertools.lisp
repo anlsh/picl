@@ -72,6 +72,15 @@
   (f:is (iter-makes '(1 2 3 4 5 6) (chain '(1 2 3) '(4 5 6))))
   (f:is (iter-makes '(1 2 3 4 5 6) (chain '() '(1 2 3) '() '(4 5 6) '()))))
 
+(f:def-test test/zip-longest ()
+  (f:is (iter-makes (list #(1 2 nil) #(nil 3 4) #(nil nil nil))
+                    (zip-longest nil '(1) '(2 3 nil) '(nil 4))))
+  (f:is (iter-makes nil (zip-longest nil '() '())))
+  (f:is (iter-makes (list #(1 :a) #(2 :a) #(3 :a))
+                    (zip-longest :a '(1 2 3) nil)))
+  (f:is (iter-makes (list #(1) #(2))
+                    (zip-longest :a '(1 2)))))
+
 (f:def-test test/dropwhile ()
   (f:is (iter-makes '(3 4 5 6)
                     (dropwhile (lambda (x) (< x 3))

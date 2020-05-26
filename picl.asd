@@ -30,5 +30,5 @@
   :components
   ((:module "tests"
     :components ((:file "package")
-                 (:file "tests" :depends-on ("package"))
-                 (:file "test-combinatoric" :depends-on ("package"))))))
+                 (:file "itertools" :depends-on ("package"))
+                 (:file "combinatoric" :depends-on ("package"))))))
