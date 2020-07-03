@@ -69,3 +69,14 @@
 ;;         (values nil nil))))
 (defun imap (pred &rest iterlikes)
   (starmap pred (apply #'zip iterlikes)))
+
+;; It's a two-element vector so that this produces the same results as zip(count, iterlike)
+(def-iter iterator-enumerate (iterator curr)
+    (enumerate (iterlike)
+      (init-state (iterator (make-iterator iterlike)) (curr 0)))
+  (multiple-value-bind (item alive) (next iterator)
+    (if alive
+        (multiple-value-prog1
+            (values (make-array 2 :initial-contents (list curr item)) t)
+          (incf curr))
+        (values nil nil))))

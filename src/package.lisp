@@ -13,6 +13,7 @@
    #:iter-to-vec
    #:empty-iterator
    #:range
+   #:enumerate
    #:icount
    #:islice
    #:zip-longest
