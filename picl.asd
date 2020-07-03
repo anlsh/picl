@@ -6,7 +6,7 @@
   :license  "MIT"
   :version "0.0.1"
   :serial t
-  :depends-on (#:defclass-std #:alexandria)
+  :depends-on (#:defclass-std #:alexandria #:iterate)
   :components
   ((:module "src"
     :components ((:file "package")
@@ -26,7 +26,7 @@
   :license  "MIT"
   :version "0.0.1"
   :serial t
-  :depends-on (#:picl #:fiveam #:generic-cl #:alexandria)
+  :depends-on (#:picl #:fiveam #:generic-cl #:alexandria #:iterate)
   :components
   ((:module "tests"
     :components ((:file "package")

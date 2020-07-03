@@ -1,6 +1,12 @@
 (in-package :picl-tests)
 (f:in-suite picl-test-suite)
 
+(f:def-test test/iterate-driver ()
+  (f:is (equalp (iterate:iter
+                  (iterate:for i in-it (picl:permutations '(1 2 3)))
+                  (iterate:collect i))
+                (list #(1 2 3) #(1 3 2) #(2 1 3) #(2 3 1) #(3 1 2) #(3 2 1)))))
+
 (f:def-test test/list-iterator ()
   (let ((ls1 '(1 2 3 4)))
     (f:is (iter-makes ls1 ls1))
