@@ -7,7 +7,6 @@
    ;; Interface
    #:next
    #:make-iterator
-   #:stop-iteration
 
    ;; Itertools
    #:iter-to-list
