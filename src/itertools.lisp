@@ -70,6 +70,33 @@
                        (self))
                 (values nil nil))))))
 
+(def-iter iterator-zip (iterator-vec n)
+
+    (zip-from-itl (itl-of-itls)
+      (let* ((itl-of-itls (iter-to-vec itl-of-itls))
+             (n (length itl-of-itls)))
+        (loop for i below n
+              do (setf (aref itl-of-itls i)
+                       (make-iterator (aref itl-of-itls i))))
+        (if (zerop n)
+            (empty-iterator)
+            (init-state (iterator-vec itl-of-itls) n))))
+
+  (loop with alive = t
+        for i below n
+        with ret-vec = (make-array n)
+        while alive
+        do
+           (multiple-value-bind (iter-item iter-alive) (next (aref iterator-vec i))
+             (setf alive iter-alive)
+             (setf (aref ret-vec i) iter-item))
+        finally (return (if alive
+                            (values ret-vec t)
+                            (values nil nil)))))
+
+(defun zip (&rest iterlikes)
+  (zip-from-itl iterlikes))
+
 
 (def-iter iterator-zip-longest (iterator-vec fill-item n num-active active-vec)
 
@@ -85,8 +112,8 @@
                         ;; TODO Maybe this should be a vit vector?
                         (active-vec (make-array num-active :initial-element t))))))
 
-  (loop with ret-vec = (make-array n)
-        for i below n
+  (loop for i below n
+        with ret-vec = (make-array n)
         do (if (aref active-vec i)
                (multiple-value-bind (iter-item iter-alive) (next (aref iterator-vec i))
                  (if iter-alive
