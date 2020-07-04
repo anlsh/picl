@@ -1,4 +1,4 @@
-(in-package :picl-tests)
+(in-package :picl/tests)
 (f:in-suite picl-test-suite)
 
 (defun lexic-lt (i l1 l2)

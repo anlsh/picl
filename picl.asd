@@ -16,11 +16,12 @@
                  (:file "combinatoric" :depends-on ("utils"))
                  (:module "iterator-impls" :depends-on ("utils")
                   :components
-                  ((:file "list")))
+                  ((:file "list")
+                   (:file "vector")))
                  (:file "picl" :depends-on ("package"))))))
 
 ;; Tests
-(asdf:defsystem #:picl-tests
+(asdf:defsystem #:picl/tests
   :description "Python Iterators in Common Lisp (Tests)"
   :author "Anish Moorthy <anlsh@protonmail.com>"
   :license  "MIT"
