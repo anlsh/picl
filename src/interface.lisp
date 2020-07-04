@@ -1,12 +1,24 @@
 (in-package :picl)
 
-(defclass iterator () ())
+(defgeneric make-iterator (iterlike)
+  (:documentation
+   "Creates an iterator from @cl:param(iterlike): an iterator is simply anything which can be passed
+as an argument to NEXT"))
 
-(defgeneric make-iterator (obj))
 (defmethod make-iterator ((obj function))
   obj)
 
 (defun next (iterator)
+  "Produces two values, the payload and the alive-indicator
+
+
+While @c(iterator) is not yet exhausted, calling next will yield its next item and a
+truthy @c(alive-indicator)
+
+
+After @c(iterator) has been exhausted all further calls should yield an @c(alive-indicator)
+of @(nil), and the payload should be ignored by the callee
+"
   (funcall iterator))
 
 ;; Driver for iterate. Maybe not the right place to put it, but it should be fine

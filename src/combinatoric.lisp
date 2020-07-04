@@ -10,6 +10,10 @@
 (def-iter iterator-product (item-vec indices lengths stopped)
 
     (product (&rest iterlikes)
+      "Cartesian product of input iterables, returned in lexicographic order.
+
+
+      For example, @c((product '(1 2) '(3 4))) yields @c(#(1 3), #(1 4), #(2 3), #(2 4))"
       (loop with item-vec = (make-array (length iterlikes))
             with lengths = (make-array (length iterlikes))
             for i below (length item-vec)
