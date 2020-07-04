@@ -9,6 +9,7 @@
 
     (product (&rest iterlikes)
       "Cartesian product of input iterables, returned as vectors in lexicographic order.
+
       ```
       (product '(1 2) '(3 4))
       => #(1 3), #(1 4), #(2 3), #(2 4)
@@ -53,6 +54,7 @@
       "`r`-permutations of input iterable, returned as vectors in lexicographic order.
 
       If `r` is not given, it defaults to the length of the input iterable
+
       ```
       (permutations '(1 2 3))
       => #(1 2 3), #(1 3 2), #(2 1 3), #(2 3 1), #(3 1 2), #(3 2 1)
@@ -92,6 +94,7 @@
 
     (combinations (iterlike r)
       "`r`-combinations of input iterable, returned as vectors in lexicographic order.
+
       ```
       (combinations '(1 2 3) 2)
       => #(1 2), #(1 3), #(2 3)
@@ -123,6 +126,7 @@
     (combinations-with-rep (iterlike r)
       "`r`-combinations with replacement of input iterable, returned as vectors in lexicographic
       order.
+
       ```
       (combinations '(1 2 3) 2)
       => #(1 1), #(1 2), #(1 3), #(2 1), #(2 2), #(2 3), #(3 1), #(3 2), #(3 3),

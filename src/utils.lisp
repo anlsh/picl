@@ -14,6 +14,7 @@
 ;; Utilities
 (defun iter-to-list (iterlike)
   "Reads `iterlike` into a list
+
   ```
   (iter-to-list (range 4))
   => (0 1 2 3)
@@ -29,6 +30,7 @@
 
 (defun iter-to-vec (iterlike)
   "Reads `iterlike` into a vector
+
   ```
   (iter-to-list (range 4))
   => #(0 1 2 3)
@@ -40,6 +42,7 @@
 
 (defun empty-iterator ()
   "Returns an empty iterator
+
   ```
   (iter-to-list (empty-iterator))
   => nil
@@ -48,6 +51,7 @@
 
 (defun take (n iterlike)
   "Returns a list consisting of the first `n` (or fewer, if the iterator runs out) items of iterlike
+
   ```
   (take-n 5 (range 30))
   => (0 1 2 3 4)

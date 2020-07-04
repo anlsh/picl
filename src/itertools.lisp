@@ -4,6 +4,7 @@
 (def-iter iterator-count (curr step)
     (icount (&optional (start 0) (step 1))
       "Yields the elements `start, start + 1*step, start + 2*step, ...`
+
       ```
       (count 2 4)
       => 2, 6, 10, 14, ...
@@ -37,6 +38,7 @@
     (enumerate (iterlike &optional (curr 0))
       "Yield two-element lists of indices (beginning at curr) and their corresponding elements in
       `iterlike`
+
       ```
       (enumerate '(a b c d))
       => #(0 a) #(1 b) #(2 c) #(3 d)
@@ -56,6 +58,7 @@
 
     (repeat (item &optional max-repeats)
       "Yields its argument forever or `max-repeats` times, if given
+
       ```
       (repeat t)
       => t, t, ...
@@ -78,6 +81,7 @@
       reached
 
       If the base iterator is empty, the result of iterator-cycle will be too
+
       ```
       (cycle '(1 2 3 4))
       => 1, 2, 3, 4, 1, 2, 3, 4, ...
@@ -122,6 +126,7 @@
 
 (defun chain (&rest iterlikes)
   "Yields the elements of the first iterable in `iterlike`, then the second, etc.
+
   ```
   (chain '(1 2 3) '(4 5 6) (count 7))
   => 1, 2, 3, 4, 5, 6, 7 ...
@@ -156,6 +161,7 @@
 (defun zip (&rest iterlikes)
   "Returns vectors consisting of the first elements from each iterable in `iterlike`, then the
   second, etc until one is consumed
+
   ```
   (zip '(1 2 3) '(a b c d))
   => #(1 a). #(2 b), #(3 c)
@@ -195,6 +201,7 @@
   "Returns vectors consisting of the first elements from each iterable in `iterlike`, then the
   second, etc until *all* are consumed. Once a constituent iterable has been exhausted,
   `fill-value` is used to pad the vector in its place.
+
   ```
   (zip nil '(1 2 3) '(a b c d))
   => #(1 a). #(2 b), #(3 c) #(nil d)
@@ -229,6 +236,7 @@
     (dropwhile (predicate iterlike)
       "Drops all elements of `base-iter` until `pred` first returns false, then yields all further
       elements
+
       ```
 `     (dropwhile (lambda (x) (< 3 x) (count 0))
       => 3, 4, 5, ...
@@ -250,9 +258,10 @@
 
     (filter (predicate iterlike)
       "Yields elements of `iterlike` for which `predicate` returns true
+
       ```
-`     (filter (lambda (x) (evenp x) (count 0))
       => 0, 2, 4, ...
+      (filter (lambda (x) (evenp x) (count 0))
       ```"
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
 
@@ -266,6 +275,7 @@
 (defun filterfalse (predicate iterlike)
 
   "Yields elements of `iterlike` for which `predicate` returns false
+
   ```
   (filterfalse (lambda (x) (evenp x) (count 0))
   => 1, 3, 5, ...
@@ -277,6 +287,7 @@
 
     (starmap (fn iterable-of-iterables)
       "Applies `fn` to the first argument of `iterable-of-iterables`, then the second, etc
+
       ```
       (starmap #'+ '(1 2) '(3 4))
       => 3, 7
@@ -290,6 +301,7 @@
 
 (defun imap (pred &rest iterlikes)
   "Applies `fn` to the first elements of each iterable in `iterlikes`, then to the seconds, etc
+
   ```
   (imap #'+ '(1 2) '(3 4))
   => 4, 6
@@ -301,6 +313,7 @@
     (takewhile (predicate iterlike)
       "Yields elements of `iterlike` for which `predicate` is truthy, terminating once it
       first returns nil
+
       ```
 `     (takewhile (lambda (x) (< 3 x) (count 0))
       => 0, 1, 2
@@ -366,6 +379,7 @@
 
   If the base iterable is large be careful not to advance any copy too far ahead of the others, as
   elements which have not yet been consumed by all copies do need to be stored in memory.
+
   ```
   i0, i1 = (tee '(1 2 3 4))
   i0 => 1, 2, 3, 4
