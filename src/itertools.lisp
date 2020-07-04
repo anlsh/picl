@@ -3,11 +3,11 @@
 
 (def-iter iterator-count (curr step)
     (icount (&optional (start 0) (step 1))
-      "Yields the elements `start, start + 1*step, start + 2*step, ...`
+      "Yields the elements `start, start + 1*step, start + 2*step, etc
 
       ```
       (count 2 4)
-      => 2, 6, 10, 14, ...
+      => 2, 6, 10, 14, etc
       ```"
       (init-state (curr start) step))
 
@@ -61,7 +61,7 @@
 
       ```
       (repeat t)
-      => t, t, ...
+      => t, t, etc
       (repeat t 4)
       => t, t, t, t
       ```"
@@ -84,7 +84,7 @@
 
       ```
       (cycle '(1 2 3 4))
-      => 1, 2, 3, 4, 1, 2, 3, 4, ...
+      => 1, 2, 3, 4, 1, 2, 3, 4, etc
       (iter-to-list (cycle '()))
       => nil
       ```"
@@ -129,7 +129,7 @@
 
   ```
   (chain '(1 2 3) '(4 5 6) (count 7))
-  => 1, 2, 3, 4, 5, 6, 7 ...
+  => 1, 2, 3, 4, 5, 6, 7 etc
   ```"
   (chain-from-iter iterlikes))
 
@@ -239,7 +239,7 @@
 
       ```
 `     (dropwhile (lambda (x) (< 3 x) (count 0))
-      => 3, 4, 5, ...
+      => 3, 4, 5, etc
       ```"
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
 
@@ -260,8 +260,8 @@
       "Yields elements of `iterlike` for which `predicate` returns true
 
       ```
-      => 0, 2, 4, ...
       (filter (lambda (x) (evenp x) (count 0))
+      => 0, 2, 4, etc
       ```"
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
 
@@ -278,7 +278,7 @@
 
   ```
   (filterfalse (lambda (x) (evenp x) (count 0))
-  => 1, 3, 5, ...
+  => 1, 3, 5, etc
   ```"
   (filter (lambda (x) (not (funcall predicate x))) iterlike))
 

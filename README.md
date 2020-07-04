@@ -39,7 +39,7 @@ If you'd like to use this library to iterate over a certain type of object,
 specialize the `make-iterator` function to produce an appropriate stream.
 
 #### Example
-1. As an example, an iterator over `'(1 2)'` produces
+An iterator over `(1 2)` produces
 `1, t` then` 2, t` then `nil, nil`: *not* `1, t` then `2, nil`
 
 
@@ -64,11 +64,8 @@ new CL packages you release and stop `:use`ing things going forward.
 - Implement groupby
 - Decide how to handle multi-dimensional arrays
 - Provide a driver for ITERATE
-- Arrays vs lists
 - Figure out how to handle `accumulate`(possibly involving a dependency
 on `generic-cl` for its `reduce` function)
-- Documentation
-- Code review
 
 ### Lower-priority to-dos (mb after release)
 - Implement Python's default functions for working with iterables (map, zip, etc)
@@ -79,8 +76,9 @@ package
 
 ### Acknowledgements
 
-Python, its itertools package, and all those who have contributed to it:
-without whom this package would not exist
+Python, its itertools package, and all those who have contributed to it.
+
+Shinmera, for creating [Staple](https://github.com/shinmera/staple)
 
 ## License
 
