@@ -8,21 +8,26 @@
                       &body next-body)
     (declare (ignore name))
     (alexandria:with-gensyms (next-fname)
-      `(labels ((,next-fname (&key ,@state-vars)
-                  (labels ((self () ,@next-body)) #'self)))
-         (defun ,constructor-name ,constructor-params
-           (macrolet
-               ((init-state (&rest argspecs)
-                  (list 'apply '#',next-fname
-                        (apply #'append
-                               '(list )
-                               (mapcar (lambda (aspec)
-                                          (if (symbolp aspec)
-                                              (list (alx:make-keyword aspec) aspec)
-                                              (destructuring-bind (aname adef) aspec
-                                                (list (alx:make-keyword aname) adef))))
-                                        argspecs)))))
-             ,@cons-body)))))
+      (let ((docstring "Function had no docstring, so this one was inserted"))
+        (when (and (cdr cons-body) (stringp (car cons-body)))
+          (setf docstring (car cons-body)
+                cons-body (cdr cons-body)))
+        `(labels ((,next-fname (&key ,@state-vars)
+                    (labels ((self () ,@next-body)) #'self)))
+           (defun ,constructor-name ,constructor-params
+             ,docstring
+             (macrolet
+                 ((init-state (&rest argspecs)
+                    (list 'apply '#',next-fname
+                          (apply #'append
+                                 '(list )
+                                 (mapcar (lambda (aspec)
+                                           (if (symbolp aspec)
+                                               (list (alx:make-keyword aspec) aspec)
+                                               (destructuring-bind (aname adef) aspec
+                                                 (list (alx:make-keyword aname) adef))))
+                                         argspecs)))))
+               ,@cons-body))))))
 
 ;; Utilities
 (defun iter-to-list (iterlike)
