@@ -1,5 +1,18 @@
 (in-package :picl)
 
+
+(def-iter iterator-count (curr step)
+    (icount (&optional (start 0) (step 1))
+      "Yields the elements `start, start + 1*step, start + 2*step, ...`
+      ```
+      (count 2 4)
+      => 2, 6, 10, 14, ...
+      ```"
+      (init-state (curr start) step))
+
+  (values (prog1 curr (incf curr step)) t))
+
+
 (def-iter iterator-range (curr stop step)
     (range (s0 &optional s1 (step 1))
       "```
@@ -20,17 +33,24 @@
       (values nil nil)))
 
 
-(def-iter iterator-icount (curr step)
-    (icount (&optional (start 0) (step 1))
-      "Yields the elements `start, start + 1*step, start + 2*step, ...`
+(def-iter iterator-enumerate (iterator curr)
+    (enumerate (iterlike &optional (curr 0))
+      "Yield two-element lists of indices (beginning at curr) and their corresponding elements in
+      `iterlike`
       ```
-      (count 2 4)
-      => 2, 6, 10, 14, ...
+      (enumerate '(a b c d))
+      => #(0 a) #(1 b) #(2 c) #(3 d)
+      (enumerate '(a b c d) 3)
+      => #(3 a) #(4 b) #(5 c) #(6 d)
       ```"
-      (init-state (curr start) step))
-
-  (values (prog1 curr (incf curr step)) t))
-
+      (init-state (iterator (make-iterator iterlike)) curr))
+  (multiple-value-bind (item alive) (next iterator)
+    (if alive
+        ;; TODO Consings is maybe no tthe best solution?
+        (multiple-value-prog1
+            (values (list curr item) t)
+          (incf curr))
+        (values nil nil))))
 
 (def-iter iterator-repeat (max curr item)
 
@@ -79,6 +99,34 @@
                              tail results)
                        (self))
                 (values nil nil))))))
+
+
+(def-iter iterator-chain-from-iter (curr-iter itail)
+
+    (chain-from-iter (itl-of-itls)
+      (let ((itl-of-itls (make-iterator itl-of-itls)))
+        (multiple-value-bind (curr-iter its-alive) (next itl-of-itls)
+          (if its-alive
+              (init-state (curr-iter (make-iterator curr-iter))
+                          (itail itl-of-itls))
+              (empty-iterator)))))
+
+  (multiple-value-bind (curr-item curr-alive) (next curr-iter)
+    (if curr-alive
+        (values curr-item t)
+        (progn (multiple-value-bind (next-iter itail-alive) (next itail)
+                 (if itail-alive
+                     (progn (setf curr-iter (make-iterator next-iter))
+                            (self))
+                     (values nil nil)))))))
+
+(defun chain (&rest iterlikes)
+  "Yields the elements of the first iterable in `iterlike`, then the second, etc.
+  ```
+  (chain '(1 2 3) '(4 5 6) (count 7))
+  => 1, 2, 3, 4, 5, 6, 7 ...
+  ```"
+  (chain-from-iter iterlikes))
 
 
 (def-iter iterator-zip (iterator-vec n)
@@ -154,34 +202,6 @@
   (zip-longest-from-itl iterlikes fill-item))
 
 
-(def-iter iterator-chain-from-iter (curr-iter itail)
-
-    (chain-from-iter (itl-of-itls)
-      (let ((itl-of-itls (make-iterator itl-of-itls)))
-        (multiple-value-bind (curr-iter its-alive) (next itl-of-itls)
-          (if its-alive
-              (init-state (curr-iter (make-iterator curr-iter))
-                          (itail itl-of-itls))
-              (empty-iterator)))))
-
-  (multiple-value-bind (curr-item curr-alive) (next curr-iter)
-    (if curr-alive
-        (values curr-item t)
-        (progn (multiple-value-bind (next-iter itail-alive) (next itail)
-                 (if itail-alive
-                     (progn (setf curr-iter (make-iterator next-iter))
-                            (self))
-                     (values nil nil)))))))
-
-(defun chain (&rest iterlikes)
-  "Yields the elements of the first iterable in `iterlike`, then the second, etc.
-  ```
-  (chain '(1 2 3) '(4 5 6) (count 7))
-  => 1, 2, 3, 4, 5, 6, 7 ...
-  ```"
-  (chain-from-iter iterlikes))
-
-
 (def-iter iterator-compress (base-iter bool-iter)
 
     (compress (base-iterlike bool-iterlike)
@@ -224,6 +244,7 @@
                 (progn (setf been-false t)
                        (values item t)))
             (values nil nil)))))
+
 
 (def-iter iterator-filter (base-iter pred)
 
