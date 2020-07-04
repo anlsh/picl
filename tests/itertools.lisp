@@ -68,6 +68,10 @@
   (f:is (iter-makes (range 113 257 7)
                     (islice (icount) 113 257 7))))
 
+(f:def-test test/imap ()
+  (f:is (iter-makes (range 0 18 6)
+                    (imap #'+ (icount) (range 0 6 2) (range 0 9 3)))))
+
 (f:def-test test/compress ()
   (f:is (iter-makes '(1 2 3 4 5 6)
                     (compress '(1 2 3 4 5 6) (repeat t))))

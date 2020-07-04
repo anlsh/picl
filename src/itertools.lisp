@@ -273,3 +273,6 @@
           for i below n
           do (setf (aref tees i) (tee-item base-iter q))
           finally (return tees))))
+
+(defun imap (pred &rest iterlikes)
+  (starmap pred (apply #'zip iterlikes)))

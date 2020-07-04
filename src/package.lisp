@@ -16,6 +16,7 @@
    #:enumerate
    #:icount
    #:islice
+   #:imap
    #:zip
    #:zip-longest
    #:chain
