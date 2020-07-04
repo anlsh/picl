@@ -6,7 +6,7 @@
   :license  "MIT"
   :version "0.0.1"
   :serial t
-  :depends-on (#:defclass-std #:alexandria #:iterate)
+  :depends-on (#:defclass-std #:alexandria #:iterate #:codex)
   :components
   ((:module "src"
     :components ((:file "package")

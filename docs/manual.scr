@@ -1,0 +1,22 @@
+@begin(section)
+@title(Overview)
+My library does X, Y and Z.
+@end(section)
+
+@begin(section)
+@title(The Iterator Interface)
+
+@cl:doc(generic make-iterator)
+@cl:doc(function next)
+@end(section)
+
+@begin(section)
+@title(Default Implementations of make-iterator)
+@cl:doc(method make-iterator (obj vector))
+@cl:doc(method make-iterator (obj list))
+@end(section)
+
+@begin(section)
+@title(Combinatorial Operators)
+@cl:doc(function product)
+@end(section)
