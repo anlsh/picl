@@ -14,7 +14,7 @@
   While iterator is not yet exhausted, calling next will yield its next item and a
   truthy alive-indicator
 
-  After (iterator has been exhausted all further calls should yield an @c(alive-indicator)
+  After iterator has been exhausted all further calls should yield an alive-indicator
   of nil, and the payload should be ignored by the callee"
   (funcall iterator))
 
