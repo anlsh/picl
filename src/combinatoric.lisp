@@ -8,12 +8,12 @@
 (def-iter iterator-product (item-vec indices lengths stopped)
 
     (product (&rest iterlikes)
-      "Cartesian product of input iterables, returned as vectors in lexicographic order.
+      ;; "Cartesian product of input iterables, returned as vectors in lexicographic order.
 
-      ```
-      (product '(1 2) '(3 4))
-      => #(1 3), #(1 4), #(2 3), #(2 4)
-      ```"
+      ;; ```
+      ;; (product '(1 2) '(3 4))
+      ;; => #(1 3), #(1 4), #(2 3), #(2 4)
+      ;; ```"
       (loop with item-vec = (make-array (length iterlikes))
             with lengths = (make-array (length iterlikes))
             for i below (length item-vec)
@@ -51,16 +51,16 @@
 (def-iter iterator-permutations (r n pool indices stopped cycles)
 
     (permutations (iterlike &optional r)
-      "`r`-permutations of input iterable, returned as vectors in lexicographic order.
+      ;; "`r`-permutations of input iterable, returned as vectors in lexicographic order.
 
-      If `r` is not given, it defaults to the length of the input iterable
+      ;; If `r` is not given, it defaults to the length of the input iterable
 
-      ```
-      (permutations '(1 2 3))
-      => #(1 2 3), #(1 3 2), #(2 1 3), #(2 3 1), #(3 1 2), #(3 2 1)
-      (permutations '(1 2 3) 2)
-      => #(1 2), #(1 3), #(2 1), #(2 3), #(3 1), #(3 2)
-      ```"
+      ;; ```
+      ;; (permutations '(1 2 3))
+      ;; => #(1 2 3), #(1 3 2), #(2 1 3), #(2 3 1), #(3 1 2), #(3 2 1)
+      ;; (permutations '(1 2 3) 2)
+      ;; => #(1 2), #(1 3), #(2 1), #(2 3), #(3 1), #(3 2)
+      ;; ```"
       (let* ((ivec (iter-to-vec iterlike))
              (n (length ivec))
              (r (or r n)))
@@ -93,12 +93,12 @@
 (def-iter iterator-combinations (indices pool stopped r n)
 
     (combinations (iterlike r)
-      "`r`-combinations of input iterable, returned as vectors in lexicographic order.
+      ;; "`r`-combinations of input iterable, returned as vectors in lexicographic order.
 
-      ```
-      (combinations '(1 2 3) 2)
-      => #(1 2), #(1 3), #(2 3)
-      ```"
+      ;; ```
+      ;; (combinations '(1 2 3) 2)
+      ;; => #(1 2), #(1 3), #(2 3)
+      ;; ```"
       (let ((ivec (iter-to-vec iterlike)))
         (if (> r (length ivec))
             (empty-iterator)
@@ -124,13 +124,12 @@
 (def-iter iterator-combinations-with-rep (indices pool stopped r n)
 
     (combinations-with-rep (iterlike r)
-      "`r`-combinations with replacement of input iterable, returned as vectors in lexicographic
-      order.
-
-      ```
-      (combinations '(1 2 3) 2)
-      => #(1 1), #(1 2), #(1 3), #(2 1), #(2 2), #(2 3), #(3 1), #(3 2), #(3 3),
-      ```"
+      ;; "r-combinations with replacement of input iterable, returned as vectors in lexicographic
+      ;; order
+      ;; ```
+      ;; (combinations (1 2 3) 2)
+      ;; => #(1 1), #(1 2), #(1 3), #(2 1), #(2 2), #(2 3), #(3 1), #(3 2), #(3 3)
+      ;; ```"
       (let ((pool (iter-to-vec iterlike)))
         (init-state r
                     (n (length pool))
