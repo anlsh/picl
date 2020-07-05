@@ -1,3 +1,9 @@
+# Important Note: Pre-Release
+
+  I am currently soliciting feedback on the codebase, and won't garuntee the
+    stability of any existing functionality yet. With that said, I don't expect
+    this to last too long or for the API to change that much
+
 # picl
 #### _Anish Moorthy <anlsh@protonmail.com>_
 
