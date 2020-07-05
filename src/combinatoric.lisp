@@ -7,7 +7,7 @@
 ;; TODO It's missing the functionality of "repeat" argument
 (def-iter iterator-product (item-vec indices lengths stopped)
 
-    (product (&rest iterlikes)
+    (product (&rest iterables)
       "Cartesian product of input iterables, returned as vectors in lexicographic order.
 
 When given a single iterable and a `repeat` argument of `n`, equivalent to computing the
@@ -18,13 +18,13 @@ product of `n` copies of its argument
 ;; #(1 3), #(1 4), #(2 3), #(2 4)
 ```"
       ;; (when repeat
-      ;;   (unless (= 1 (length iterlikes))
+      ;;   (unless (= 1 (length iterables))
       ;;     (error "WExactly one iterable should be given in conjunction with :repeat"))
-      ;;   (return-from product (apply #'product (iter-to-list (tee (car iterlikes) repeat)))))
-      (loop with item-vec = (make-array (length iterlikes))
-            with lengths = (make-array (length iterlikes))
+      ;;   (return-from product (apply #'product (iter-to-list (tee (car iterables) repeat)))))
+      (loop with item-vec = (make-array (length iterables))
+            with lengths = (make-array (length iterables))
             for i below (length item-vec)
-            for iter in iterlikes
+            for iter in iterables
             do (setf (aref item-vec i) (iter-to-vec iter))
                (setf (aref lengths i) (length (aref item-vec i)))
             minimizing (aref lengths i) into min-len
@@ -57,7 +57,7 @@ product of `n` copies of its argument
 
 (def-iter iterator-permutations (r n pool indices stopped cycles)
 
-    (permutations (iterlike &optional r)
+    (permutations (iterable &optional r)
       "`r`-permutations of input iterable, returned as vectors in lexicographic order.
 
 If `r` is not given, it defaults to the length of the input iterable
@@ -68,7 +68,7 @@ If `r` is not given, it defaults to the length of the input iterable
 (permutations '(1 2 3) 2)
 ;; #(1 2), #(1 3), #(2 1), #(2 3), #(3 1), #(3 2)
 ```"
-      (let* ((ivec (iter-to-vec iterlike))
+      (let* ((ivec (iter-to-vec iterable))
              (n (length ivec))
              (r (or r n)))
         (if (> r n)
@@ -99,14 +99,14 @@ If `r` is not given, it defaults to the length of the input iterable
 ;; Combinations
 (def-iter iterator-combinations (indices pool stopped r n)
 
-    (combinations (iterlike r)
+    (combinations (iterable r)
       "r-combinations of input iterable, returned as vectors in lexicographic order.
 
 ```
 (combinations '(1 2 3) 2)
 ;; #(1 2), #(1 3), #(2 3)
 ```"
-      (let ((ivec (iter-to-vec iterlike)))
+      (let ((ivec (iter-to-vec iterable)))
         (if (> r (length ivec))
             (empty-iterator)
             (init-state r (n (length ivec)) (pool ivec)
@@ -130,7 +130,7 @@ If `r` is not given, it defaults to the length of the input iterable
 
 (def-iter iterator-combinations-with-rep (indices pool stopped r n)
 
-    (combinations-with-rep (iterlike r)
+    (combinations-with-rep (iterable r)
       "r-combinations with replacement of input iterable, returned as vectors in lexicographic
 order
 
@@ -138,7 +138,7 @@ order
 (combinations '(1 2 3) 2)
 ;; #(1 1), #(1 2), #(1 3), #(2 1), #(2 2), #(2 3), #(3 1), #(3 2), #(3 3)
 ```"
-      (let ((pool (iter-to-vec iterlike)))
+      (let ((pool (iter-to-vec iterable)))
         (init-state r
                     (n (length pool))
                     (pool pool)

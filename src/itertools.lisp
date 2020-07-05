@@ -35,9 +35,9 @@
 
 
 (def-iter iterator-enumerate (iterator curr)
-    (enumerate (iterlike &optional (curr 0))
+    (enumerate (iterable &optional (curr 0))
       "Yield two-element lists of indices (beginning at curr) and their corresponding elements in
-      `iterlike`
+      `iterable`
 
 ```
 (enumerate '(a b c d))
@@ -45,7 +45,7 @@
 (enumerate '(a b c d) 3)
 ;; #(3 a), #(4 b), #(5 c), #(6 d)
 ```"
-      (init-state (iterator (make-iterator iterlike)) curr))
+      (init-state (iterator (make-iterator iterable)) curr))
   (multiple-value-bind (item alive) (next iterator)
     (if alive
         ;; TODO Consings is maybe no tthe best solution?
@@ -76,7 +76,7 @@
 
 (def-iter iterator-cycle (base-iter stopped results tail)
 
-    (cycle (iterlike)
+    (cycle (iterable)
       "Continually yields the elements of its argument in order, starting over when the end is
 reached
 
@@ -88,7 +88,7 @@ If the base iterator is empty, the result of iterator-cycle will be too
 (iter-to-list (cycle '()))
 ;; nil
 ```"
-      (init-state (base-iter (make-iterator iterlike))))
+      (init-state (base-iter (make-iterator iterable))))
 
   (if stopped
       (values (prog1 (car tail) (setf tail (or (cdr tail) results)))
@@ -124,14 +124,14 @@ If the base iterator is empty, the result of iterator-cycle will be too
                             (self))
                      (values nil nil)))))))
 
-(defun chain (&rest iterlikes)
-  "Yields the elements of the first iterable in `iterlike`, then the second, etc.
+(defun chain (&rest iterables)
+  "Yields the elements of the first iterable in `iterable`, then the second, etc.
 
 ```
 (chain '(1 2 3) '(4 5 6) (count 7))
 ;; 1, 2, 3, 4, 5, 6, 7 etc
 ```"
-  (chain-from-iter iterlikes))
+  (chain-from-iter iterables))
 
 
 (def-iter iterator-zip (iterator-vec n)
@@ -158,15 +158,15 @@ If the base iterator is empty, the result of iterator-cycle will be too
                             (values ret-vec t)
                             (values nil nil)))))
 
-(defun zip (&rest iterlikes)
-  "Returns vectors consisting of the first elements from each iterable in `iterlike`, then the
+(defun zip (&rest iterables)
+  "Returns vectors consisting of the first elements from each iterable in `iterable`, then the
 second, etc until one is consumed
 
 ```
 (zip '(1 2 3) '(a b c d))
 ;; #(1 a). #(2 b), #(3 c)
 ```"
-  (zip-from-itl iterlikes))
+  (zip-from-itl iterables))
 
 
 (def-iter iterator-zip-longest (iterator-vec fill-item n num-active active-vec)
@@ -197,8 +197,8 @@ second, etc until one is consumed
                             (values nil nil)
                             (values ret-vec t)))))
 
-(defun zip-longest (fill-item &rest iterlikes)
-  "Returns vectors consisting of the first elements from each iterable in `iterlike`, then the
+(defun zip-longest (fill-item &rest iterables)
+  "Returns vectors consisting of the first elements from each iterable in `iterable`, then the
 second, etc until *all* are consumed. Once a constituent iterable has been exhausted,
 `fill-value` is used to pad the vector in its place.
 
@@ -206,13 +206,13 @@ second, etc until *all* are consumed. Once a constituent iterable has been exhau
 (zip nil '(1 2 3) '(a b c d))
 ;; #(1 a). #(2 b), #(3 c), #(nil d)
 ```"
-  (zip-longest-from-itl iterlikes fill-item))
+  (zip-longest-from-itl iterables fill-item))
 
 
 (def-iter iterator-compress (base-iter bool-iter)
 
-    (compress (base-iterlike bool-iterlike)
-      "Yields elements of `base-iterlike` while the corresponding element in `bool-iterlike`
+    (compress (base-iterable bool-iterable)
+      "Yields elements of `base-iterable` while the corresponding element in `bool-iterable`
 is truthy.
 
 Stops when either of its arguments is consumed
@@ -221,8 +221,8 @@ Stops when either of its arguments is consumed
 (iterator-compress (count) (t nil t nil t nil))
 ;; 0 2 4
 ```"
-      (init-state (base-iter (make-iterator base-iterlike))
-                  (bool-iter (make-iterator bool-iterlike))))
+      (init-state (base-iter (make-iterator base-iterable))
+                  (bool-iter (make-iterator bool-iterable))))
 
   (multiple-value-bind (curr-item curr-alive) (next base-iter)
     (multiple-value-bind (bool-item bool-alive) (next bool-iter)
@@ -235,7 +235,7 @@ Stops when either of its arguments is consumed
 
 (def-iter iterator-dropwhile (base-iter pred been-false)
 
-    (dropwhile (predicate iterlike)
+    (dropwhile (predicate iterable)
       "Drops all elements of `base-iter` until `pred` first returns false, then yields all further
 elements
 
@@ -243,7 +243,7 @@ elements
 (dropwhile (lambda (x) (< 3 x) (count)))
 ;; 3, 4, 5, etc
 ```"
-      (init-state (pred predicate) (base-iter (make-iterator iterlike))))
+      (init-state (pred predicate) (base-iter (make-iterator iterable))))
 
   (if been-false
       (next base-iter)
@@ -258,14 +258,14 @@ elements
 
 (def-iter iterator-filter (base-iter pred)
 
-    (filter (predicate iterlike)
-      "Yields elements of `iterlike` for which `predicate` returns true
+    (filter (predicate iterable)
+      "Yields elements of `iterable` for which `predicate` returns true
 
 ```
 (filter (lambda (x) (evenp x) (count)))
 ;; 0, 2, 4, etc
 ```"
-      (init-state (pred predicate) (base-iter (make-iterator iterlike))))
+      (init-state (pred predicate) (base-iter (make-iterator iterable))))
 
   (multiple-value-bind (base-item base-alive) (next base-iter)
     (if base-alive
@@ -274,15 +274,15 @@ elements
               (self))
         (values nil nil))))
 
-(defun filterfalse (predicate iterlike)
+(defun filterfalse (predicate iterable)
 
-  "Yields elements of `iterlike` for which `predicate` returns false
+  "Yields elements of `iterable` for which `predicate` returns false
 
 ```
 (filterfalse (lambda (x) (evenp x) (count)))
 ;; 1, 3, 5, etc
 ```"
-  (filter (lambda (x) (not (funcall predicate x))) iterlike))
+  (filter (lambda (x) (not (funcall predicate x))) iterable))
 
 
 (def-iter iterator-starmap (base-iter fn)
@@ -301,26 +301,26 @@ elements
         (values (apply fn (iter-to-list base-item)) t)
         (values nil nil))))
 
-(defun imap (pred &rest iterlikes)
-  "Applies `fn` to the first elements of each iterable in `iterlikes`, then to the seconds, etc
+(defun imap (pred &rest iterables)
+  "Applies `fn` to the first elements of each iterable in `iterables`, then to the seconds, etc
 
 ```
 (imap #'+ '(1 2) '(3 4))
 ;; 4, 6
 ```"
-  (starmap pred (apply #'zip iterlikes)))
+  (starmap pred (apply #'zip iterables)))
 
 (def-iter iterator-takewhile (base-iter pred been-false)
 
-    (takewhile (predicate iterlike)
-      "Yields elements of `iterlike` for which `predicate` is truthy, terminating once it
+    (takewhile (predicate iterable)
+      "Yields elements of `iterable` for which `predicate` is truthy, terminating once it
 first returns nil
 
 ```
 (takewhile (lambda (x) (< 3 x) (count)))
 ;; 0, 1, 2
 ```"
-      (init-state (pred predicate) (base-iter (make-iterator iterlike))))
+      (init-state (pred predicate) (base-iter (make-iterator iterable))))
 
   (if been-false
       (values nil nil)
@@ -332,12 +332,12 @@ first returns nil
 
 (def-iter iterator-islice (base-iter start stop delta curr)
 
-    (islice (iterlike start stop delta)
+    (islice (iterable start stop delta)
       "Works like Python's
       [islice](https://docs.python.org/3.8/library/itertools.html#itertools.islice)"
       (unless (and (>= start 0) (>= stop 0) (> delta 0))
         (error (format nil "Args must all be positive~%")))
-      (init-state (base-iter (make-iterator iterlike))
+      (init-state (base-iter (make-iterator iterable))
                   start stop delta
                   (curr 0)))
 
@@ -365,8 +365,8 @@ first returns nil
 
 (def-iter iterator-tee-item (q base-iter)
 
-    (tee-item (iterlike q)
-      (init-state (base-iter (make-iterator iterlike)) q))
+    (tee-item (iterable q)
+      (init-state (base-iter (make-iterator iterable)) q))
 
   (if (null (cdr q))
       (multiple-value-bind (base-item base-alive) (next base-iter)
@@ -375,8 +375,8 @@ first returns nil
             (return-from self (values nil nil)))))
   (setf q (cdr q)) (values (car q) t))
 
-(defun tee (iterlike &optional (n 2))
-  "Returns a vector of `n` independent copies of `iterliike`. `iterlike` itself should not be used
+(defun tee (iterable &optional (n 2))
+  "Returns a vector of `n` independent copies of `iterliike`. `iterable` itself should not be used
 after it has been passed to `tee`, otherwise its copies will not be properly updated
 
 If the base iterable is large be careful not to advance any copy too far ahead of the others, as
@@ -387,7 +387,7 @@ tees - (tee '(1 2 3 4))
 ;; tees[0] => 1, 2, 3, 4
 ;; tees[1] => 1, 2, 3, 4
 ```"
-  (let ((base-iter (make-iterator iterlike))
+  (let ((base-iter (make-iterator iterable))
         (q (cons nil nil)))
     (loop with tees = (make-array n)
           for i below n

@@ -1,8 +1,8 @@
 (in-package :picl)
 
 ;; Utilities
-(defun iter-to-list (iterlike)
-  "Reads `iterlike` into a list
+(defun iter-to-list (iterable)
+  "Reads `iterable` into a list
 
 ```
 (iter-to-list (range 4))
@@ -15,10 +15,10 @@
                (if base-alive
                    (cons base-item (iter-to-list iterator))
                    nil))))
-    (rec (make-iterator iterlike))))
+    (rec (make-iterator iterable))))
 
-(defun iter-to-vec (iterlike)
-  "Reads `iterlike` into a vector
+(defun iter-to-vec (iterable)
+  "Reads `iterable` into a vector
 
 ```
 (iter-to-list (range 4))
@@ -26,7 +26,7 @@
 (iter-to-list (count))
 ;; Out of memory error!
 ```"
-  (let ((ls (iter-to-list iterlike)))
+  (let ((ls (iter-to-list iterable)))
     (make-array (length ls) :initial-contents ls)))
 
 (defun empty-iterator ()
@@ -38,8 +38,8 @@
 ```"
   (make-iterator nil))
 
-(defun take (n iterlike)
-  "Returns a list consisting of the first `n` (or fewer, if the iterator runs out) items of iterlike
+(defun take (n iterable)
+  "Returns a list consisting of the first `n` (or fewer, if the iterator runs out) items of iterable
 
 ```
 (take 5 (count))
@@ -47,7 +47,7 @@
 take 30 (range 4)
 ;; (0 1 2 3)
 ```"
-  (loop with iterator = (make-iterator iterlike)
+  (loop with iterator = (make-iterator iterable)
         for i below n
         for (base-item base-alive) = (multiple-value-list (next iterator))
         while base-alive

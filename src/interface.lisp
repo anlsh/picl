@@ -1,8 +1,8 @@
 (in-package :picl)
 
-(defgeneric make-iterator (iterlike)
+(defgeneric make-iterator (iterable)
   (:documentation
-   "Creates an iterator from `iterlike`: an iterator is simply anything which can be passed
+   "Creates an iterator from `iterable`: an iterator is simply anything which can be passed
    as an argument to `next`"))
 
 (defmethod make-iterator ((obj function))
