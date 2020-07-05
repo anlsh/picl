@@ -1,16 +1,5 @@
 (in-package :picl)
 
-;; Driver for iterate.
-;; Example: (iterate:iter (iterate:for i in-it (picl:permutations '(1 2 3))) (print i))
-(iterate:defmacro-driver (iterate:FOR var IN-IT iterlike)
-  (alx:with-gensyms (g curr alive)
-    (let ((kwd (if iterate:generate 'iterate:generate 'iterate:for)))
-      `(progn
-         (iterate:with ,g = (make-iterator ,iterlike))
-         (,kwd ,var next (multiple-value-bind (,curr ,alive) (funcall ,#'next ,g)
-                           (if ,alive ,curr (iterate:terminate))))))))
-
-
 ;; Utilities
 (defun iter-to-list (iterlike)
   "Reads `iterlike` into a list

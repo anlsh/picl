@@ -6,7 +6,7 @@
   :license  "MIT"
   :version "0.0.1"
   :serial t
-  :depends-on (#:defclass-std #:alexandria #:iterate #:codex)
+  :depends-on (#:defclass-std #:alexandria)
   :components
   ((:module "src"
     :components ((:file "package")
@@ -20,6 +20,18 @@
                    (:file "vector")))
                  (:file "picl" :depends-on ("package"))))))
 
+
+(asdf:defsystem #:picl/iterate
+  :description "Iterate driver for PICL"
+  :author "Anish Moorthy <anlsh@protonmail.com>"
+  :license  "MIT"
+  :version "0.0.1"
+  :serial t
+  :depends-on (#:picl #:alexandria #:iterate)
+  :components
+  ((:module "src"
+    :components ((:file "iterate-driver")))))
+
 ;; Tests
 (asdf:defsystem #:picl/tests
   :description "Python Iterators in Common Lisp (Tests)"
@@ -27,7 +39,7 @@
   :license  "MIT"
   :version "0.0.1"
   :serial t
-  :depends-on (#:picl #:fiveam #:generic-cl #:alexandria #:iterate)
+  :depends-on (#:picl #:picl/iterate #:fiveam #:generic-cl #:alexandria #:iterate)
   :components
   ((:module "tests"
     :components ((:file "package")

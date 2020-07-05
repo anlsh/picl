@@ -10,10 +10,17 @@
     (product (&rest iterlikes)
       "Cartesian product of input iterables, returned as vectors in lexicographic order.
 
+When given a single iterable and a `repeat` argument of `n`, equivalent to computing the
+product of `n` copies of its argument
+
 ```
 (product '(1 2) '(3 4))
 ;; #(1 3), #(1 4), #(2 3), #(2 4)
 ```"
+      ;; (when repeat
+      ;;   (unless (= 1 (length iterlikes))
+      ;;     (error "WExactly one iterable should be given in conjunction with :repeat"))
+      ;;   (return-from product (apply #'product (iter-to-list (tee (car iterlikes) repeat)))))
       (loop with item-vec = (make-array (length iterlikes))
             with lengths = (make-array (length iterlikes))
             for i below (length item-vec)
