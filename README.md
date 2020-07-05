@@ -36,17 +36,12 @@ Once a stream has indicated that it is dead, all further calls should also
 indicate likewise.
 
 If you'd like to use this library to iterate over a certain type of object,
-specialize the `make-iterator` function to produce an appropriate stream.
+specialize the `make-iterator` generic on your object to produce an appropriate
+stream.
 
 #### Example
 An iterator over `(1 2)` produces
 `1, t` then` 2, t` then `nil, nil`: *not* `1, t` then `2, nil`
-
-
-### Stability
-
-This project is currently unreleased so I won't garuntee stability just yet:
-it's not far off though.
 
 ### A note on `:use`
 
@@ -62,12 +57,10 @@ new CL packages you release and stop `:use`ing things going forward.
 ### To-do before release
 
 - Implement groupby
-- Decide how to handle multi-dimensional arrays
-- Provide a driver for ITERATE
 - Figure out how to handle `accumulate`(possibly involving a dependency
 on `generic-cl` for its `reduce` function)
 
-### Lower-priority to-dos (mb after release)
+### Future Work
 - Implement Python's default functions for working with iterables (map, zip, etc)
 - Port the more-itertools recipes found at bottom of the Python itertools
 package
