@@ -1,7 +1,7 @@
 # picl
 #### _Anish Moorthy <anlsh@protonmail.com>_
 
-*Python Iterators in Common Lisp. Pronounced like "pickle"*
+*Python Itertools in Common Lisp. Pronounced like "pickle"*
 
 An (almost) complete port of Python's
 [itertools](https://docs.python.org/3.8/library/itertools.html) package.
@@ -25,7 +25,7 @@ nowadays).
 ### Documentation
 All functions are annotated with markdown docstrings. Thanks to Shinmera's
 [Staple](https://github.com/Shinmera/staple) and [htmlpreview](https://github.com/htmlpreview/htmlpreview.github.com),
-you can view the[documentation here](https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html)
+you can view the [documentation here](https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html)
 
 (Yes, I'm aware there's some sort of javascript garbage at the bottom of the
   page: it seems like some a bug with htmlpreview:. It doesn't truncate the
@@ -35,7 +35,7 @@ you can view the[documentation here](https://htmlpreview.github.io/?https://gith
 You can build the documentation yourself like so
 
 ``` common-lisp
-(staple:generate :picl)
+(staple:generate :picl :if-exists :overwrite)
 ```
 
 If you don't have the `iterate` package loaded it'll complain about invalid
@@ -61,7 +61,7 @@ iterator is consumed.
 
 By example
 
-```lisp
+```common-lisp
 (defvar it (make-iterator '(1 2 3)))
 (next it) ;; 1 t
 (next it) ;; 2 t
@@ -118,7 +118,7 @@ This is a new library, and so I have the liberty to tell you this: do not, and I
 mean *do not* `:use` this package. This library might export new symbols in the
 future, and I do not care about accomodating the use of `:use`.
 
-Use a [package local
+Use [package local
 nicknames]((https://gist.github.com/phoe/2b63f33a2a4727a437403eceb7a6b4a3))
 instead. It would also be cool if you could include similar disclaimers in any
 new CL packages you release and stop `:use`ing things going forward.
