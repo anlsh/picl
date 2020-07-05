@@ -68,10 +68,10 @@ iterator is consumed.
 By example
 
 ```common-lisp
-(defvar it (make-iterator '(1 2 3)))
-(next it) ;; 1 t
-(next it) ;; 2 t
-(next it) ;; nil nil
+(let ((it (make-iterator '(1 2))))
+  (next it)  ;; (values 1 t)
+  (next it)  ;; (values 2 t)
+  (next it)) ;; (values nil nil)
 ```
 After returning `nil`, all further `next` calls should also produce `nil` as
 quickly as possible. Furthermore when the alive indicator is `nil`, the payload
