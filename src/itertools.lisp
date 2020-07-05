@@ -198,14 +198,14 @@ second, etc until one is consumed
                             (values ret-vec t)))))
 
 (defun zip-longest (fill-item &rest iterlikes)
-  ;; "Returns vectors consisting of the first elements from each iterable in `iterlike`, then the
-  ;; second, etc until *all* are consumed. Once a constituent iterable has been exhausted,
-  ;; `fill-value` is used to pad the vector in its place.
+  "Returns vectors consisting of the first elements from each iterable in `iterlike`, then the
+second, etc until *all* are consumed. Once a constituent iterable has been exhausted,
+`fill-value` is used to pad the vector in its place.
 
-  ;; ```
-  ;; (zip nil '(1 2 3) '(a b c d))
-  ;; ;; #(1 a). #(2 b), #(3 c) #(nil d)
-  ;; ```"
+```
+(zip nil '(1 2 3) '(a b c d))
+;; #(1 a). #(2 b), #(3 c), #(nil d)
+```"
   (zip-longest-from-itl iterlikes fill-item))
 
 
@@ -276,24 +276,24 @@ elements
 
 (defun filterfalse (predicate iterlike)
 
-  ;; "Yields elements of `iterlike` for which `predicate` returns false
+  "Yields elements of `iterlike` for which `predicate` returns false
 
-  ;; ```
-  ;; (filterfalse (lambda (x) (evenp x) (count))
-  ;; ;; 1, 3, 5, etc
-  ;; ```"
+```
+(filterfalse (lambda (x) (evenp x) (count)))
+;; 1, 3, 5, etc
+```"
   (filter (lambda (x) (not (funcall predicate x))) iterlike))
 
 
 (def-iter iterator-starmap (base-iter fn)
 
     (starmap (fn iterable-of-iterables)
-      ;; "Applies `fn` to the first argument of `iterable-of-iterables`, then the second, etc
+      "Applies `fn` to the first argument of `iterable-of-iterables`, then the second, etc
 
-      ;; ```
-      ;; (starmap #'+ '(1 2) '(3 4))
-      ;; ;; 3, 7
-      ;; ```"
+```
+(starmap #'+ '(1 2) '(3 4))
+;; 3, 7
+```"
       (init-state (base-iter (make-iterator iterable-of-iterables)) fn))
 
   (multiple-value-bind (base-item base-alive) (next base-iter)
@@ -302,24 +302,24 @@ elements
         (values nil nil))))
 
 (defun imap (pred &rest iterlikes)
-  ;; "Applies `fn` to the first elements of each iterable in `iterlikes`, then to the seconds, etc
+  "Applies `fn` to the first elements of each iterable in `iterlikes`, then to the seconds, etc
 
-  ;; ```
-  ;; (imap #'+ '(1 2) '(3 4))
-  ;; ;; 4, 6
-  ;; ```"
+```
+(imap #'+ '(1 2) '(3 4))
+;; 4, 6
+```"
   (starmap pred (apply #'zip iterlikes)))
 
 (def-iter iterator-takewhile (base-iter pred been-false)
 
     (takewhile (predicate iterlike)
-;;       "Yields elements of `iterlike` for which `predicate` is truthy, terminating once it
-;;       first returns nil
+      "Yields elements of `iterlike` for which `predicate` is truthy, terminating once it
+first returns nil
 
-;;       ```
-;; `     (takewhile (lambda (x) (< 3 x) (count))
-;;       ;; 0, 1, 2
-;;       ```"
+```
+(takewhile (lambda (x) (< 3 x) (count)))
+;; 0, 1, 2
+```"
       (init-state (pred predicate) (base-iter (make-iterator iterlike))))
 
   (if been-false
@@ -376,17 +376,17 @@ elements
   (setf q (cdr q)) (values (car q) t))
 
 (defun tee (iterlike &optional (n 2))
-;;   "Returns a vector of `n` independent copies of `iterliike`. `iterlike` itself should not be used
-;; after it has been passed to `tee`, otherwise its copies will not be properly updated
+  "Returns a vector of `n` independent copies of `iterliike`. `iterlike` itself should not be used
+after it has been passed to `tee`, otherwise its copies will not be properly updated
 
-;; If the base iterable is large be careful not to advance any copy too far ahead of the others, as
-;; elements which have not yet been consumed by all copies do need to be stored in memory.
+If the base iterable is large be careful not to advance any copy too far ahead of the others, as
+elements which have not yet been consumed by all copies do need to be stored in memory.
 
-;; ```
-;; i0, i1 = (tee '(1 2 3 4))
-;; ;; i0 ;; 1, 2, 3, 4
-;; ;; i1 ;; 1, 2, 3, 4
-;; ```"
+```
+tees - (tee '(1 2 3 4))
+;; tees[0] => 1, 2, 3, 4
+;; tees[1] => 1, 2, 3, 4
+```"
   (let ((base-iter (make-iterator iterlike))
         (q (cons nil nil)))
     (loop with tees = (make-array n)
