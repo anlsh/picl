@@ -1,5 +1,5 @@
 (in-package :picl/tests)
-(f:in-suite picl-test-suite)
+(f:in-suite suite)
 
 (defun lexic-lt (i l1 l2)
   (if (= i (length l1) (length l2))

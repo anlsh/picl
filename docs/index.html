@@ -215,7 +215,11 @@ Pull requests welcome!</p> <h3>Objectives and Rationale</h3> <p>I am aware of ot
 and <code>snakes</code> relies on <code>cl-cont</code> meaning that it doesn't play nice
 with the condition system (apparently).</p> <p>My hope is to reduce fragmentation of the Common Lisp ecosystem by providing a
 library which is complete, performant, and &quot;seamless&quot; (whatever that means
-nowadays).</p> <h3>Documentation &amp; Testing</h3> <p>All functions are annotated with markdown docstrings. Thanks to Shinmera's <a href="https://github.com/Shinmera/staple">Staple</a></p> <h3>Concepts and How-To</h3> <p>An &quot;iterator&quot; in PICL is simply a function taking no arguments and producing two
+nowadays).</p> <h3>Documentation &amp; Testing</h3> <p>All functions are annotated with markdown docstrings. Thanks to Shinmera's <a href="https://github.com/Shinmera/staple">Staple</a> and <a href="https://github.com/htmlpreview/htmlpreview.github.com">htmlpreview</a>,
+you can view the<a href="https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html">documentation here</a></p> <p>(Yes, I'm aware there's some sort of javascript garbage at the bottom of the
+  page: it seems like some a bug with htmlpreview:. It doesn't truncate the
+  documentation however, so I suppose this is just the price I pay for not
+  knowing how to host webpages myself)</p> <h3>Concepts and How-To</h3> <p>An &quot;iterator&quot; in PICL is simply a function taking no arguments and producing two
 values: the payload and the alive-indicator. The payload represent's the
 iterator's next item, and the alive-indicator should be truthy until after the
 iterator is consumed.</p> <p>By example</p> <pre><code>(<a href="http://l1sp.org/cl/defvar" class="xref">defvar</a> it (<a href="#GENERIC-FUNCTION%20PICL%3AMAKE-ITERATOR" class="xref">make-iterator</a> '(1 2 3)))
@@ -228,16 +232,16 @@ described above. For instance, the <code><a href="#GENERIC-FUNCTION%20PICL%3AMAK
   (lambda ()
     (if obj
         (<a href="http://l1sp.org/cl/values" class="xref">values</a> (<a href="http://l1sp.org/cl/prog1" class="xref">prog1</a> (<a href="http://l1sp.org/cl/car" class="xref">car</a> obj) (setf obj (<a href="http://l1sp.org/cl/cdr" class="xref">cdr</a> obj))) t)
-        (<a href="http://l1sp.org/cl/values" class="xref">values</a> nil nil))))</code></pre> <p>Specializations for <code><a href="#FUNCTION%20PICL%3ALIST" class="xref">list</a></code> and <code><a href="#FUNCTION%20PICL%3AVECTOR" class="xref">vector</a></code> are defined in PICL. A universal <code>in-it</code> driver is also provided for <a href="https://common-lisp.net/project/iterate/">Iterate</a> through the <code>picl/iterate</code> system.</p> <pre><code>(ql:quickload '(:picl :picl/iterate))
+        (<a href="http://l1sp.org/cl/values" class="xref">values</a> nil nil))))</code></pre> <p>Specializations for <code><a href="#FUNCTION%20PICL%3ALIST" class="xref">list</a></code> and <code><a href="#FUNCTION%20PICL%3AVECTOR" class="xref">vector</a></code> are defined in PICL. A universal <code>in-it</code> driver is also provided for <a href="https://common-lisp.net/project/iterate/">Iterate</a> through the <code>picl/iterate</code> system.</p> <pre><code><span class="code"><span class="paren1">(<span class="code">ql:quickload '<span class="paren2">(<span class="code"><span class="keyword">:picl</span> <span class="keyword">:picl/iterate</span></span>)</span></span>)</span>
 
-(iterate:iter
-    (iterate:for i in-it #(1 2 3))
-    (iterate:collect i))
-;; (1 2 3)
-(iterate:iter
-    (iterate:for i in-it (picl:permutations '(1 2 3)))
-    (iterate:collect i))
-;;(#(1 2 3) #(1 3 2) #(2 1 3) #(2 3 1) #(3 1 2) #(3 2 1))</code></pre> <p>though you should probably <code>:use</code> iterate so as not to have the <code>iterate:</code> prefix
+<span class="paren1">(<span class="code">iterate:iter
+    <span class="paren2">(<span class="code">iterate:for i in-it #<span class="paren3">(<span class="code">1 2 3</span>)</span></span>)</span>
+    <span class="paren2">(<span class="code">iterate:collect i</span>)</span></span>)</span>
+<span class="comment">;; (1 2 3)
+</span><span class="paren1">(<span class="code">iterate:iter
+    <span class="paren2">(<span class="code">iterate:for i in-it <span class="paren3">(<span class="code">picl:permutations '<span class="paren4">(<span class="code">1 2 3</span>)</span></span>)</span></span>)</span>
+    <span class="paren2">(<span class="code">iterate:collect i</span>)</span></span>)</span>
+<span class="comment">;;(#(1 2 3) #(1 3 2) #(2 1 3) #(2 3 1) #(3 1 2) #(3 2 1))</span></span></code></pre> <p>though you should probably <code>:use</code> iterate so as not to have the <code>iterate:</code> prefix
 everywhere</p> <h4>Missing Functionality</h4> <p>The only functions which are still missing are <a href="https://docs.python.org/3.8/library/itertools.html#itertools.groupby">groupby</a> and <a href="https://docs.python.org/3.8/library/itertools.html#itertools.accumulate">accumulate</a>.</p> <p>PICL's product function is missing the <code><a href="#FUNCTION%20PICL%3AREPEAT" class="xref">repeat</a></code> keyword argument from <a href="https://docs.python.org/3.8/library/itertools.html#itertools.product">Python's version </a>.
 The same effect can be achieved with <code>(product (tee iterable n-repeats))</code>,
 though at a higher memory cost</p> <h3>A note on <code>:use</code></h3> <p>This is a new library, and so I have the liberty to tell you this: do not, and I
@@ -334,29 +338,6 @@ second, etc until <em>all</em> are consumed. Once a constituent iterable has bee
     }
 
     var markFragmented = function(){
-        if(window.location.hash){
-            var el = document.getElementById(decodeURIComponent(window.location.hash.substr(1)));
-            if(el) markElement(el);
-        }
-    }
-
-    var registerXrefLink = function(link){
-        var el = document.getElementById(decodeURIComponent(link.getAttribute("href").substr(1)));
-        if(el){
-            link.addEventListener("click", function(){
-                markElement(el);
-            });
-        }
-    }
-
-    var registerXrefLinks = function(root){
-        root = root || document;
-        [].forEach.call(root.querySelectorAll("a.xref"), registerXrefLink);
-    }
-
-    markFragmented();
-    registerXrefLinks();
-}); </script> </body> </html>   var markFragmented = function(){
         if(window.location.hash){
             var el = document.getElementById(decodeURIComponent(window.location.hash.substr(1)));
             if(el) markElement(el);

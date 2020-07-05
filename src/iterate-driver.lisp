@@ -1,13 +1,11 @@
 (defpackage #:picl/iterate
-  (:use #:cl)
-  (:export #:in-it))
+  (:use #:cl))
 
 (in-package :picl/iterate)
 
 (iterate:defmacro-driver (iterate:FOR var IN-IT iterlike)
-  "```
-(iterate:iter (iterate:for i in-it (picl-iterate:permutations '(1 2 3))) (print i))
-```"
+  ;; Example usage
+  ;; (iterate:iter (iterate:for i in-it (picl-iterate:permutations '(1 2 3))) (print i))
   (alexandria:with-gensyms (g curr alive)
     (let ((kwd (if iterate:generate 'iterate:generate 'iterate:for)))
       `(progn

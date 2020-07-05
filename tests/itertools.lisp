@@ -1,5 +1,5 @@
 (in-package :picl/tests)
-(f:in-suite picl-test-suite)
+(f:in-suite suite)
 
 (f:def-test test/iterate-driver ()
   (f:is (equalp (iterate:iter

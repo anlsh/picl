@@ -22,9 +22,35 @@ My hope is to reduce fragmentation of the Common Lisp ecosystem by providing a
 library which is complete, performant, and "seamless" (whatever that means
 nowadays).
 
-### Documentation & Testing
+### Documentation
 All functions are annotated with markdown docstrings. Thanks to Shinmera's
-[Staple](https://github.com/Shinmera/staple)
+[Staple](https://github.com/Shinmera/staple) and [htmlpreview](https://github.com/htmlpreview/htmlpreview.github.com),
+you can view the[documentation here](https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html)
+
+(Yes, I'm aware there's some sort of javascript garbage at the bottom of the
+  page: it seems like some a bug with htmlpreview:. It doesn't truncate the
+  documentation however, so I suppose this is just the price I pay for not
+  knowing how to host webpages myself)
+
+You can build the documentation yourself like so
+
+``` common-lisp
+(staple:generate :picl)
+```
+
+If you don't have the `iterate` package loaded it'll complain about invalid
+function names, but you can ignore that.
+
+### Testing
+A fairly comprehensive test suite is provided using
+[FiveAM](https://common-lisp.net/project/fiveam/).
+
+You can run the test suite yourself like so
+
+``` common-lisp
+(ql:quickload :picl/tests)
+(fiveam:run! 'picl/tests:suite)
+```
 
 ### Concepts and How-To
 

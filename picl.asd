@@ -11,14 +11,10 @@
   ((:module "src"
     :components ((:file "package")
                  (:file "interface" :depends-on ("package"))
+                 (:file "default-iterators" :depends-on ("interface"))
                  (:file "utils" :depends-on ("interface"))
                  (:file "itertools" :depends-on ("utils"))
-                 (:file "combinatoric" :depends-on ("utils"))
-                 (:module "iterator-impls" :depends-on ("utils")
-                  :components
-                  ((:file "list")
-                   (:file "vector")))
-                 (:file "picl" :depends-on ("package"))))))
+                 (:file "combinatoric" :depends-on ("utils"))))))
 
 
 (asdf:defsystem #:picl/iterate
@@ -34,7 +30,7 @@
 
 ;; Tests
 (asdf:defsystem #:picl/tests
-  :description "Python Iterators in Common Lisp (Tests)"
+  :description "Tests for PICL"
   :author "Anish Moorthy <anlsh@protonmail.com>"
   :license  "MIT"
   :version "0.0.1"
@@ -43,5 +39,5 @@
   :components
   ((:module "tests"
     :components ((:file "package")
-                 (:file "itertools" :depends-on ("package"))
-                 (:file "combinatoric" :depends-on ("package"))))))
+                 (:file "test-itertools" :depends-on ("package"))
+                 (:file "test-combinatoric" :depends-on ("package"))))))
