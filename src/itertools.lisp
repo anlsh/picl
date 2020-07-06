@@ -304,14 +304,14 @@ elements
         (values (apply fn (iter-to-list base-item)) t)
         (values nil nil))))
 
-(defun imap (pred &rest iterables)
+(defun imap (predicate &rest iterables)
   "Applies `fn` to the first elements of each iterable in `iterables`, then to the seconds, etc
 
 ```
 (imap #'+ '(1 2) '(3 4))
 ;; 4, 6
 ```"
-  (starmap pred (apply #'zip iterables)))
+  (starmap predicate (apply #'zip iterables)))
 
 (def-iter iterator-takewhile (base-iter pred been-false)
 
