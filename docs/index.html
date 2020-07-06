@@ -235,7 +235,7 @@ described above. For instance, the <code><a href="#GENERIC-FUNCTION%20PICL%3AMAK
   (lambda ()
     (if obj
         (<a href="http://l1sp.org/cl/values" class="xref">values</a> (<a href="http://l1sp.org/cl/prog1" class="xref">prog1</a> (<a href="http://l1sp.org/cl/car" class="xref">car</a> obj) (setf obj (<a href="http://l1sp.org/cl/cdr" class="xref">cdr</a> obj))) t)
-        (<a href="http://l1sp.org/cl/values" class="xref">values</a> nil nil))))</code></pre> <p>Specializations for lists and vectors are predefinedL. A universal <code>in-it</code> driver is also provided for <a href="https://common-lisp.net/project/iterate/">Iterate</a> through the <code>picl/iterate</code> system.</p> <pre><code>(ql:quickload '(:picl :picl/iterate))
+        (<a href="http://l1sp.org/cl/values" class="xref">values</a> nil nil))))</code></pre> <p>Specializations for lists and vectors are predefined. A universal <code>in-it</code> driver is also provided for <a href="https://common-lisp.net/project/iterate/">Iterate</a> through the <code>picl/iterate</code> system.</p> <pre><code>(ql:quickload '(:picl :picl/iterate))
 
 (iterate:iter
     (iterate:for i in-it #(1 2 3))
@@ -365,4 +365,4 @@ second, etc until <em>all</em> are consumed. Once a constituent iterable has bee
 
     markFragmented();
     registerXrefLinks();
-}); </script> </body> </html> 
+}); </script> </body> </html>  

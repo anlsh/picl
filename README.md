@@ -90,7 +90,7 @@ described above. For instance, the `make-iterator` definition for lists is
         (values (prog1 (car obj) (setf obj (cdr obj))) t)
         (values nil nil))))
 ```
-Specializations for lists and vectors are predefinedL. A universal `in-it`
+Specializations for lists and vectors are predefined. A universal `in-it`
 driver is also provided for [Iterate](https://common-lisp.net/project/iterate/)
 through the `picl/iterate` system.
 
