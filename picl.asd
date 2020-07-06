@@ -3,6 +3,7 @@
 (asdf:defsystem #:picl
   :description "Python Itertools in Common Lisp"
   :author "Anish Moorthy <anlsh@protonmail.com>"
+  :homepage "https://anlsh.github.io/picl/"
   :license  "MIT"
   :version "0.0.1"
   :serial t
@@ -19,9 +20,6 @@
 
 (asdf:defsystem #:picl/iterate
   :description "Iterate driver for PICL"
-  :author "Anish Moorthy <anlsh@protonmail.com>"
-  :license  "MIT"
-  :version "0.0.1"
   :serial t
   :depends-on (#:picl #:alexandria #:iterate)
   :components
@@ -31,9 +29,6 @@
 ;; Tests
 (asdf:defsystem #:picl/tests
   :description "Tests for PICL"
-  :author "Anish Moorthy <anlsh@protonmail.com>"
-  :license  "MIT"
-  :version "0.0.1"
   :serial t
   :depends-on (#:picl #:picl/iterate #:fiveam #:generic-cl #:alexandria #:iterate)
   :components
