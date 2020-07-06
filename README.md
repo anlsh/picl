@@ -17,36 +17,31 @@ Pull requests welcome!
 
 Other libraries, such as
 [cl-itertools](https://github.com/mabragor/cl-itertools)
-and[snakes](https://github.com/BnMcGn/snakes), provide similar functionality
+and [snakes](https://github.com/BnMcGn/snakes), provide similar functionality
 
 Unfortunately `cl-itertools` remains very incomplete, and both`cl-itertools`and
-`snakes` and rely `cl-cont` meaning that they wont always play nice with certain
+`snakes` rely on `cl-cont` meaning that they wont always play nice with certain
 parts of CL (apparently)
+
+PICL provides a near-complete port of itertools, complete with laziness, without
+any reliance on `cl-cont` or other such libraries
 
 ### Documentation
 All functions are annotated with markdown docstrings. Thanks to
-[Staple](https://github.com/Shinmera/staple) and [htmlpreview](https://github.com/htmlpreview/htmlpreview.github.com),
-you can view the [documentation here](https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html)
-
-(Yes, I'm aware there's some sort of javascript garbage at the bottom of the
-  page: it seems like a bug with htmlpreview:. It doesn't truncate the
-  documentation however, so I suppose this is just the price I pay for not
-  knowing how to host webpages myself)
-
-You can build the documentation yourself like so
+[Staple](https://github.com/Shinmera/staple) you can
+[read the documentation online](https://anlsh.github.io/picl) or build it
+yourself like so
 
 ``` common-lisp
 (staple:generate :picl :if-exists :supersede)
 ```
-
-If you don't have the `iterate` package loaded it'll complain about invalid
-function names, but you can ignore that.
+Just ignore any warnings you get about invalid definitions, all they mean is
+that you don't have PICL's dependencies loaded yet.
 
 ### Testing
-A fairly comprehensive test suite is provided using
-[FiveAM](https://common-lisp.net/project/fiveam/).
-
-You can run the test suite yourself like so
+A fairly comprehensive test suite written with
+[FiveAM](https://common-lisp.net/project/fiveam/) is provided. You can run it
+yourself like so
 
 ``` common-lisp
 (ql:quickload :picl/tests)
