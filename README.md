@@ -36,7 +36,7 @@ you can view the [documentation here](https://htmlpreview.github.io/?https://git
 You can build the documentation yourself like so
 
 ``` common-lisp
-(staple:generate :picl :if-exists :overwrite)
+(staple:generate :picl :if-exists :supersede)
 ```
 
 If you don't have the `iterate` package loaded it'll complain about invalid
