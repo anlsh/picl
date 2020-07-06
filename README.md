@@ -1,8 +1,7 @@
 # Important Note: Pre-Release
 
-  I am currently soliciting feedback on the codebase, and won't garuntee the
-    stability of any existing functionality yet. With that said, I don't expect
-    this to last too long or for the API to change that much
+  I am currently soliciting feedback on PICL, so things aren't stable yet.
+  This shouldn't last more than a few days though
 
 # picl
 #### _Anish Moorthy <anlsh@protonmail.com>_
@@ -10,25 +9,19 @@
 *Python Itertools in Common Lisp. Pronounced like "pickle"*
 
 An (almost) complete port of Python's
-[itertools](https://docs.python.org/3.8/library/itertools.html) package.
+[itertools](https://docs.python.org/3.8/library/itertools.html) package,
+complete with laziness where applicable.
 Pull requests welcome!
 
 ### Objectives and Rationale
 
-I am aware of other libraries providing similar functionality, notably
+Other libraries, such as
+[cl-itertools](https://github.com/mabragor/cl-itertools)
+and[snakes](https://github.com/BnMcGn/snakes), provide similar functionality
 
-- [cl-itertools](https://github.com/mabragor/cl-itertools)
-
-- [snakes](https://github.com/BnMcGn/snakes), in addition to providing
-  Python-style generators
-
-Unfortunately `cl-itertools` remains very incomplete,
-and `snakes` relies on `cl-cont` meaning that it doesn't play nice
-with the condition system (apparently).
-
-My hope is to reduce fragmentation of the Common Lisp ecosystem by providing a
-library which is complete, performant, and "seamless" (whatever that means
-nowadays).
+Unfortunately `cl-itertools` remains very incomplete, and both`cl-itertools`and
+`snakes` and rely `cl-cont` meaning that they wont always play nice with certain
+parts of CL (apparently)
 
 ### Documentation
 All functions are annotated with markdown docstrings. Thanks to
@@ -107,8 +100,8 @@ through the `picl/iterate` system.
     (iterate:collect i))
 ;; (#(1 2 3) #(1 3 2) #(2 1 3) #(2 3 1) #(3 1 2) #(3 2 1))
 ```
-though you should probably `:use` iterate so as not to have the `iterate:` prefix
-everywhere
+though you should probably `:use` iterate so as not to have the `iterate:`
+prefix everywhere
 
 #### Missing Functionality
 The only functions which are still missing are
@@ -128,11 +121,10 @@ instead. It would also be cool if you could include similar disclaimers in any
 new CL packages you release and stop `:use`ing things going forward.
 
 ### Future Work
-- Implement Python's default functions for working with iterables (map, zip, etc)
 - Port the more-itertools recipes found at bottom of the Python itertools
 package
 - Port the [more-iterools](https://pypi.org/project/more-itertools/) package
-(this might be a big job)
+(this seems like a big job)
 
 ### Acknowledgements
 

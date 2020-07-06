@@ -1,228 +1,14 @@
-<!DOCTYPE html> <html lang="EN"> <head> <meta charset="utf-8"> <title>Picl</title> <style>html body {
-  margin: 0 auto 0 auto;
-  padding: 20px;
-  max-width: 1024px;
-  font-family: sans-serif;
-  font-size: 14pt;
-  overflow-y: scroll;
-}
-
-html body a {
-  text-decoration: none;
-}
-
-html body a[href] {
-  color: #0055AA;
-}
-
-html body a[href]:hover {
-  color: #0088EE;
-}
-
-html body pre {
-  background: #FAFAFA;
-  border: 1px solid #DDDDDD;
-  padding: 0.75em;
-  overflow-x: auto;
-}
-
-html body pre >code a[href] {
-  color: #223388;
-}
-
-article.project h1 {
-  font-size: 1.7em;
-}
-
-article.project h1,article.project h2,article.project h3,article.project h4,article.project h5,article.project h6 {
-  margin: 0.2em 0 0.1em 0;
-  text-indent: 1em;
-}
-
-article.project >header {
-  text-align: center;
-}
-
-article.project >header img.logo {
-  display: block;
-  margin: auto;
-  max-height: 170px;
-}
-
-article.project >header h1 {
-  display: inline-block;
-  text-indent: 0;
-  font-size: 2.5em;
-}
-
-article.project >header .version {
-  vertical-align: bottom;
-}
-
-article.project >header .languages {
-  margin-top: -0.5em;
-  text-transform: capitalize;
-}
-
-article.project >header .description {
-  margin: 0;
-}
-
-article.project >header .pages {
-  margin-top: 0.5em;
-  font-size: 1.2em;
-  text-transform: capitalize;
-}
-
-article.project >header .pages a {
-  display: inline-block;
-  padding: 0 0.2em;
-}
-
-article.project >section {
-  margin: 1em 0 1em 0;
-}
-
-article.project #index >ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-article.project .row label {
-  display: inline-block;
-  min-width: 8em;
-}
-
-article.project #system .row {
-  display: flex;
-}
-
-article.project #system #dependencies {
-  display: inline;
-  margin: 0;
-  padding: 0;
-}
-
-article.project #system #dependencies li {
-  display: inline;
-  padding: 0 0.2em;
-}
-
-article.definition {
-  margin: 1em 0 0 0;
-}
-
-article.definition >header h1,article.definition >header h2,article.definition >header h3,article.definition >header h4,article.definition >header h5,article.definition >header h6 {
-  text-indent: 0;
-  display: inline-block;
-}
-
-article.definition >header ul {
-  display: inline-block;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-article.definition >header ul li {
-  display: inline-block;
-  padding: 0 0.2em 0 0;
-}
-
-article.definition >header .visibility {
-  display: none;
-}
-
-article.definition >header .visibility,article.definition >header .type {
-  text-transform: lowercase;
-}
-
-article.definition >header .source-link {
-  visibility: hidden;
-  float: right;
-}
-
-article.definition >header .source-link:after {
-  visibility: visible;
-  content: "[SRC]";
-}
-
-article.definition .docstring {
-  margin: 0 0 0 1em;
-}
-
-article.definition .docstring pre {
-  font-size: 0.8em;
-  white-space: pre-wrap;
-}
-
-.definition.package >header ul.nicknames {
-  display: inline-block;
-  list-style: none;
-  margin: 0;
-  padding: 0 0 0 1em;
-}
-
-.definition.package >header ul.nicknames li {
-  display: inline;
-}
-
-.definition.package >header ul.nicknames:before {
-  content: "(";
-}
-
-.definition.package >header ul.nicknames:after {
-  content: ")";
-}
-
-.definition.package ul.definitions {
-  margin: 0;
-  list-style: none;
-  padding: 0 0 0 0.5em;
-}
-
-.definition.callable >header .name:before,.definition.type >header .name:before {
-  content: "(";
-  font-weight: normal;
-}
-
-.definition.callable >header .arguments:after,.definition.type >header .arguments:after {
-  content: ")";
-}
-
-.definition.callable >header .arguments .arguments:before,.definition.type >header .arguments .arguments:before {
-  content: "(";
-}
-
-.definition.callable >header .arguments .argument,.definition.type >header .arguments .argument {
-  padding: 0;
-}
-
-.definition.callable >header .arguments .argument.lambda-list-keyword,.definition.type >header .arguments .argument.lambda-list-keyword {
-  color: #991155;
-}
-
-.definition li>mark {
-  background: none;
-  border-left: 0.3em solid #0088EE;
-  padding-left: 0.3em;
-  display: block;
-} </style> </head> <body> <article class="project"> <header>  <h1>picl</h1>  <span class="version">0.0.1</span>  <nav class="languages">      </nav>  <p class="description">Python Itertools in Common Lisp</p>  <nav class="pages">    <a href="iterate/picl/index.html">picl/iterate</a>    <a href="tests/picl/index.html">picl/tests</a>  </nav> </header> <section id="documentation"><h1>Important Note: Pre-Release</h1> <p>I am currently soliciting feedback on the codebase, and won't garuntee the
-    stability of any existing functionality yet. With that said, I don't expect
-    this to last too long or for the API to change that much</p> <h1>picl</h1> <h4><em>Anish Moorthy <a href="mailto:anlsh@protonmail.com">mailto:anlsh@protonmail.com</a></em></h4> <p><em>Python Itertools in Common Lisp. Pronounced like &quot;pickle&quot;</em></p> <p>An (almost) complete port of Python's <a href="https://docs.python.org/3.8/library/itertools.html">itertools</a> package.
-Pull requests welcome!</p> <h3>Objectives and Rationale</h3> <p>I am aware of other libraries providing similar functionality, notably</p> <ul> <li><p><a href="https://github.com/mabragor/cl-itertools">cl-itertools</a></p></li> <li><p><a href="https://github.com/BnMcGn/snakes">snakes</a>, in addition to providing
-  Python-style generators</p></li> </ul> <p>Unfortunately <code>cl-itertools</code> remains very incomplete,
-and <code>snakes</code> relies on <code>cl-cont</code> meaning that it doesn't play nice
-with the condition system (apparently).</p> <p>My hope is to reduce fragmentation of the Common Lisp ecosystem by providing a
-library which is complete, performant, and &quot;seamless&quot; (whatever that means
-nowadays).</p> <h3>Documentation</h3> <p>All functions are annotated with markdown docstrings. Thanks to <a href="https://github.com/Shinmera/staple">Staple</a> and <a href="https://github.com/htmlpreview/htmlpreview.github.com">htmlpreview</a>,
+<!DOCTYPE html> <html lang="EN"> <head> <meta charset="utf-8"> <title>Picl</title> <style>html body{margin:0 auto 0 auto;padding:20px;max-width:1024px;font-family:sans-serif;font-size:14pt;overflow-y:scroll;}html body a{text-decoration:none;}html body a[href]{color:#0055AA;}html body a[href]:hover{color:#0088EE;}html body pre{background:#FAFAFA;border:1px solid #DDDDDD;padding:0.75em;overflow-x:auto;}html body pre >code a[href]{color:#223388;}article.project h1{font-size:1.7em;}article.project h1,article.project h2,article.project h3,article.project h4,article.project h5,article.project h6{margin:0.2em 0 0.1em 0;text-indent:1em;}article.project >header{text-align:center;}article.project >header img.logo{display:block;margin:auto;max-height:170px;}article.project >header h1{display:inline-block;text-indent:0;font-size:2.5em;}article.project >header .version{vertical-align:bottom;}article.project >header .languages{margin-top:-0.5em;text-transform:capitalize;}article.project >header .description{margin:0;}article.project >header .pages{margin-top:0.5em;font-size:1.2em;text-transform:capitalize;}article.project >header .pages a{display:inline-block;padding:0 0.2em;}article.project >section{margin:1em 0 1em 0;}article.project #index >ul{list-style:none;margin:0;padding:0;}article.project .row label{display:inline-block;min-width:8em;}article.project #system .row{display:flex;}article.project #system #dependencies{display:inline;margin:0;padding:0;}article.project #system #dependencies li{display:inline;padding:0 0.2em;}article.definition{margin:1em 0 0 0;}article.definition >header h1,article.definition >header h2,article.definition >header h3,article.definition >header h4,article.definition >header h5,article.definition >header h6{text-indent:0;display:inline-block;}article.definition >header ul{display:inline-block;list-style:none;margin:0;padding:0;}article.definition >header ul li{display:inline-block;padding:0 0.2em 0 0;}article.definition >header .visibility{display:none;}article.definition >header .visibility,article.definition >header .type{text-transform:lowercase;}article.definition >header .source-link{visibility:hidden;float:right;}article.definition >header .source-link:after{visibility:visible;content:"[SRC]";}article.definition .docstring{margin:0 0 0 1em;}article.definition .docstring pre{font-size:0.8em;white-space:pre-wrap;}.definition.package >header ul.nicknames{display:inline-block;list-style:none;margin:0;padding:0 0 0 1em;}.definition.package >header ul.nicknames li{display:inline;}.definition.package >header ul.nicknames:before{content:"(";}.definition.package >header ul.nicknames:after{content:")";}.definition.package ul.definitions{margin:0;list-style:none;padding:0 0 0 0.5em;}.definition.callable >header .name:before,.definition.type >header .name:before{content:"(";font-weight:normal;}.definition.callable >header .arguments:after,.definition.type >header .arguments:after{content:")";}.definition.callable >header .arguments .arguments:before,.definition.type >header .arguments .arguments:before{content:"(";}.definition.callable >header .arguments .argument,.definition.type >header .arguments .argument{padding:0;}.definition.callable >header .arguments .argument.lambda-list-keyword,.definition.type >header .arguments .argument.lambda-list-keyword{color:#991155;}.definition li>mark{background:none;border-left:0.3em solid #0088EE;padding-left:0.3em;display:block;} </style> </head> <body> <article class="project"> <header>  <h1>picl</h1>  <span class="version">0.0.1</span>  <nav class="languages">      </nav>  <p class="description">Python Itertools in Common Lisp</p>  <nav class="pages">    <a href="iterate/picl/index.html">picl/iterate</a>    <a href="tests/picl/index.html">picl/tests</a>  </nav> </header> <section id="documentation"><h1>Important Note: Pre-Release</h1> <p>I am currently soliciting feedback on PICL, so things aren't stable yet.
+  This shouldn't last more than a few days though</p> <h1>picl</h1> <h4><em>Anish Moorthy <a href="mailto:anlsh@protonmail.com">mailto:anlsh@protonmail.com</a></em></h4> <p><em>Python Itertools in Common Lisp. Pronounced like &quot;pickle&quot;</em></p> <p>An (almost) complete port of Python's <a href="https://docs.python.org/3.8/library/itertools.html">itertools</a> package,
+complete with laziness where applicable.
+Pull requests welcome!</p> <h3>Objectives and Rationale</h3> <p>Other libraries, such as <a href="https://github.com/mabragor/cl-itertools">cl-itertools</a> and<a href="https://github.com/BnMcGn/snakes">snakes</a>, provide similar functionality</p> <p>Unfortunately <code>cl-itertools</code> remains very incomplete, and both<code>cl-itertools</code>and <code>snakes</code> and rely <code>cl-cont</code> meaning that they wont always play nice with certain
+parts of CL (apparently)</p> <h3>Documentation</h3> <p>All functions are annotated with markdown docstrings. Thanks to <a href="https://github.com/Shinmera/staple">Staple</a> and <a href="https://github.com/htmlpreview/htmlpreview.github.com">htmlpreview</a>,
 you can view the <a href="https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html">documentation here</a></p> <p>(Yes, I'm aware there's some sort of javascript garbage at the bottom of the
   page: it seems like a bug with htmlpreview:. It doesn't truncate the
   documentation however, so I suppose this is just the price I pay for not
   knowing how to host webpages myself)</p> <p>You can build the documentation yourself like so</p> <pre><code>(<a href="https://Shinmera.github.io/staple/#GENERIC-FUNCTION%20STAPLE%3AGENERATE" class="xref">staple:generate</a> :picl :if-exists :overwrite)</code></pre> <p>If you don't have the <code>iterate</code> package loaded it'll complain about invalid
-function names, but you can ignore that.</p> <h3>Testing</h3> <p>A fairly comprehensive test suite is provided using <a href="https://common-lisp.net/project/fiveam/">FiveAM</a>.</p> <p>You can run the test suite yourself like so</p> <pre><code>(ql:quickload :picl/tests)
-(fiveam:run! 'picl/tests:suite)</code></pre> <h3>Concepts and How-To</h3> <p>An &quot;iterator&quot; in PICL is simply a function taking no arguments and producing two
+function names, but you can ignore that.</p> <h3>Testing</h3> <p>A fairly comprehensive test suite is provided using <a href="https://common-lisp.net/project/fiveam/">FiveAM</a>.</p> <p>You can run the test suite yourself like so</p> <pre><code><span class="code"><span class="paren1">(<span class="code">ql:quickload <span class="keyword">:picl/tests</span></span>)</span>
+<span class="paren1">(<span class="code">fiveam:run! 'picl/tests:suite</span>)</span></span></code></pre> <h3>Concepts and How-To</h3> <p>An &quot;iterator&quot; in PICL is simply a function taking no arguments and producing two
 values: the payload and the alive-indicator. The payload represent's the
 iterator's next item, and the alive-indicator should be truthy until after the
 iterator is consumed.</p> <p>By example</p> <pre><code>(let ((it (<a href="#GENERIC-FUNCTION%20PICL%3AMAKE-ITERATOR" class="xref">make-iterator</a> '(1 2))))
@@ -235,24 +21,23 @@ described above. For instance, the <code><a href="#GENERIC-FUNCTION%20PICL%3AMAK
   (lambda ()
     (if obj
         (<a href="http://l1sp.org/cl/values" class="xref">values</a> (<a href="http://l1sp.org/cl/prog1" class="xref">prog1</a> (<a href="http://l1sp.org/cl/car" class="xref">car</a> obj) (setf obj (<a href="http://l1sp.org/cl/cdr" class="xref">cdr</a> obj))) t)
-        (<a href="http://l1sp.org/cl/values" class="xref">values</a> nil nil))))</code></pre> <p>Specializations for lists and vectors are predefined. A universal <code>in-it</code> driver is also provided for <a href="https://common-lisp.net/project/iterate/">Iterate</a> through the <code>picl/iterate</code> system.</p> <pre><code>(ql:quickload '(:picl :picl/iterate))
+        (<a href="http://l1sp.org/cl/values" class="xref">values</a> nil nil))))</code></pre> <p>Specializations for lists and vectors are predefined. A universal <code>in-it</code> driver is also provided for <a href="https://common-lisp.net/project/iterate/">Iterate</a> through the <code>picl/iterate</code> system.</p> <pre><code><span class="code"><span class="paren1">(<span class="code">ql:quickload '<span class="paren2">(<span class="code"><span class="keyword">:picl</span> <span class="keyword">:picl/iterate</span></span>)</span></span>)</span>
 
-(iterate:iter
-    (iterate:for i in-it #(1 2 3))
-    (iterate:collect i))
-;; (1 2 3)
-
-(iterate:iter
-    (iterate:for i in-it (<a href="#FUNCTION%20PICL%3APERMUTATIONS" class="xref">picl:permutations</a> '(1 2 3)))
-    (iterate:collect i))
-;; (#(1 2 3) #(1 3 2) #(2 1 3) #(2 3 1) #(3 1 2) #(3 2 1))</code></pre> <p>though you should probably <code>:use</code> iterate so as not to have the <code>iterate:</code> prefix
-everywhere</p> <h4>Missing Functionality</h4> <p>The only functions which are still missing are <a href="https://docs.python.org/3.8/library/itertools.html#itertools.groupby">groupby</a> and <a href="https://docs.python.org/3.8/library/itertools.html#itertools.accumulate">accumulate</a>.</p> <h3>A note on <code>:use</code></h3> <p>This is a new library, and so I have the liberty to tell you this: do not, and I
+<span class="paren1">(<span class="code">iterate:iter
+    <span class="paren2">(<span class="code">iterate:for i in-it #<span class="paren3">(<span class="code">1 2 3</span>)</span></span>)</span>
+    <span class="paren2">(<span class="code">iterate:collect i</span>)</span></span>)</span>
+<span class="comment">;; (1 2 3)
+</span>
+<span class="paren1">(<span class="code">iterate:iter
+    <span class="paren2">(<span class="code">iterate:for i in-it <span class="paren3">(<span class="code">picl:permutations '<span class="paren4">(<span class="code">1 2 3</span>)</span></span>)</span></span>)</span>
+    <span class="paren2">(<span class="code">iterate:collect i</span>)</span></span>)</span>
+<span class="comment">;; (#(1 2 3) #(1 3 2) #(2 1 3) #(2 3 1) #(3 1 2) #(3 2 1))</span></span></code></pre> <p>though you should probably <code>:use</code> iterate so as not to have the <code>iterate:</code> prefix everywhere</p> <h4>Missing Functionality</h4> <p>The only functions which are still missing are <a href="https://docs.python.org/3.8/library/itertools.html#itertools.groupby">groupby</a> and <a href="https://docs.python.org/3.8/library/itertools.html#itertools.accumulate">accumulate</a>.</p> <h3>A note on <code>:use</code></h3> <p>This is a new library, and so I have the liberty to tell you this: do not, and I
 mean <em>do not</em> <code>:use</code> this package. This library might export new symbols in the
 future, and I do not care about accomodating the use of <code>:use</code>.</p> <p>Use <a href="(https://gist.github.com/phoe/2b63f33a2a4727a437403eceb7a6b4a3)">package local
 nicknames</a> instead. It would also be cool if you could include similar disclaimers in any
-new CL packages you release and stop <code>:use</code>ing things going forward.</p> <h3>Future Work</h3> <ul> <li>Implement Python's default functions for working with iterables (map, zip, etc)</li> <li>Port the more-itertools recipes found at bottom of the Python itertools
+new CL packages you release and stop <code>:use</code>ing things going forward.</p> <h3>Future Work</h3> <ul> <li>Port the more-itertools recipes found at bottom of the Python itertools
 package</li> <li>Port the <a href="https://pypi.org/project/more-itertools/">more-iterools</a> package
-(this might be a big job)</li> </ul> <h3>Acknowledgements</h3> <p>Python, its itertools package, and all those who have contributed to it.</p> <p>Shinmera, for creating <a href="https://github.com/shinmera/staple">Staple</a></p> <h2>License</h2> <p>This project is provided under the MIT License (see LICENSE.md)</p> </section>   <section id="system"> <h2>System Information</h2>  <div class="row"> <label for="version">Version:</label> <a id="version">0.0.1</a> </div>   <div class="row"> <label for="dependencies">Dependencies:</label> <ul id="dependencies"><li><a class="external" href="https://github.com/EuAndreh/defclass-std">defclass-std</a></li><li><a class="external">alexandria</a></li></ul> </div>   <div class="row"> <label for="author">Author:</label> <a id="author" href="mailto:anlsh@protonmail.com">Anish Moorthy</a> </div>   <div class="row"> <label for="license">License:</label> <a id="license" href="file:///home/anlsh/Code/picl/LICENSE.md">MIT</a> </div>    </section>    <section id="index"> <h2>Definition Index</h2> <ul> <li> <article class="definition package" id="PACKAGE PICL"> <header> <h3> <a href="#PACKAGE%20PICL">PICL</a> </h3> <ul class="nicknames"></ul>  </header> <div class="docstring"><i>No documentation provided.</i></div> <ul class="definitions"> <li> <article class="definition function callable" id="FUNCTION PICL:CHAIN"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20PICL%3ACHAIN">CHAIN</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument lambda-list-keyword">&amp;REST</li>    <li class="argument">ITERABLES</li>  </ul>  <a class="source-link" href="file:///home/anlsh/Code/picl/src/itertools.lisp#133:0">Source</a>  </header> <div class="docstring"><p>Yields the elements of the first iterable in <code>iterable</code>, then the second, etc.</p> <pre><code>(<a href="#FUNCTION%20PICL%3ACHAIN" class="xref">chain</a> '(1 2 3) '(4 5 6) (<a href="http://l1sp.org/cl/count" class="xref">count</a> 7))
+(this seems like a big job)</li> </ul> <h3>Acknowledgements</h3> <p>Python, its itertools package, and all those who have contributed to it.</p> <p>Shinmera, for creating <a href="https://github.com/shinmera/staple">Staple</a></p> <h2>License</h2> <p>This project is provided under the MIT License (see LICENSE.md)</p> </section>   <section id="system"> <h2>System Information</h2>  <div class="row"> <label for="version">Version:</label> <a id="version">0.0.1</a> </div>   <div class="row"> <label for="dependencies">Dependencies:</label> <ul id="dependencies"><li><a class="external" href="https://github.com/EuAndreh/defclass-std">defclass-std</a></li><li><a class="external">alexandria</a></li></ul> </div>   <div class="row"> <label for="author">Author:</label> <a id="author" href="mailto:anlsh@protonmail.com">Anish Moorthy</a> </div>   <div class="row"> <label for="license">License:</label> <a id="license" href="file:///home/anlsh/Code/picl/LICENSE.md">MIT</a> </div>   </section>    <section id="index"> <h2>Definition Index</h2> <ul> <li> <article class="definition package" id="PACKAGE PICL"> <header> <h3> <a href="#PACKAGE%20PICL">PICL</a> </h3> <ul class="nicknames"></ul>  </header> <div class="docstring"><i>No documentation provided.</i></div> <ul class="definitions"> <li> <article class="definition function callable" id="FUNCTION PICL:CHAIN"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20PICL%3ACHAIN">CHAIN</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument lambda-list-keyword">&amp;REST</li>    <li class="argument">ITERABLES</li>  </ul>  <a class="source-link" href="file:///home/anlsh/Code/picl/src/itertools.lisp#133:0">Source</a>  </header> <div class="docstring"><p>Yields the elements of the first iterable in <code>iterable</code>, then the second, etc.</p> <pre><code>(<a href="#FUNCTION%20PICL%3ACHAIN" class="xref">chain</a> '(1 2 3) '(4 5 6) (<a href="http://l1sp.org/cl/count" class="xref">count</a> 7))
 ;; 1, 2, 3, 4, 5, 6, 7 etc</code></pre> </div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION PICL:COMBINATIONS"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20PICL%3ACOMBINATIONS">COMBINATIONS</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">R</li>    <li class="argument">ITERABLE</li>  </ul>  <a class="source-link" href="file:///home/anlsh/Code/picl/src/combinatoric.lisp#143:0">Source</a>  </header> <div class="docstring"><p>r-combinations of input iterable, returned as vectors in lexicographic order.</p> <pre><code>(<a href="#FUNCTION%20PICL%3ACOMBINATIONS" class="xref">combinations</a> 2 '(1 2 3))
 ;; #(1 2), #(1 3), #(2 3)</code></pre> </div> </article> </li>  <li> <article class="definition function callable" id="FUNCTION PICL:COMBINATIONS-WITH-REP"> <header> <span class="visibility">EXTERNAL</span> <span class="type">FUNCTION</span> <h4 class="name"> <a href="#FUNCTION%20PICL%3ACOMBINATIONS-WITH-REP">COMBINATIONS-WITH-REP</a> </h4> <ul class="qualifiers"></ul> <ul class="arguments">  <li class="argument">R</li>    <li class="argument">ITERABLE</li>  </ul>  <a class="source-link" href="file:///home/anlsh/Code/picl/src/combinatoric.lisp#173:0">Source</a>  </header> <div class="docstring"><p>r-combinations with replacement of input iterable, returned as vectors in lexicographic
 order</p> <pre><code>(<a href="#FUNCTION%20PICL%3ACOMBINATIONS" class="xref">combinations</a> 2 '(1 2 3))
@@ -365,4 +150,4 @@ second, etc until <em>all</em> are consumed. Once a constituent iterable has bee
 
     markFragmented();
     registerXrefLinks();
-}); </script> </body> </html>  
+}); </script> </body> </html> 
