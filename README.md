@@ -34,7 +34,7 @@ All functions are annotated with markdown docstrings. Thanks to Shinmera's
 you can view the [documentation here](https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html)
 
 (Yes, I'm aware there's some sort of javascript garbage at the bottom of the
-  page: it seems like some a bug with htmlpreview:. It doesn't truncate the
+  page: it seems like a bug with htmlpreview:. It doesn't truncate the
   documentation however, so I suppose this is just the price I pay for not
   knowing how to host webpages myself)
 
