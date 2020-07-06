@@ -44,14 +44,13 @@ but produces an iterator (as defined by PICL) instead of a Python-esque range ob
 
 ```
 (enumerate '(a b c d))
-;; #(0 a), #(1 b), #(2 c), #(3 d)
+;; (0 a), (1 b), (2 c), (3 d)
 (enumerate '(a b c d) 3)
-;; #(3 a), #(4 b), #(5 c), #(6 d)
+;; (3 a), (4 b), (5 c), (6 d)
 ```"
       (init-state (iterator (make-iterator iterable)) curr))
   (multiple-value-bind (item alive) (next iterator)
     (if alive
-        ;; TODO Consings is maybe no tthe best solution?
         (multiple-value-prog1
             (values (list curr item) t)
           (incf curr))

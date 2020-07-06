@@ -4,7 +4,6 @@
 
 (in-package :picl)
 
-;; TODO It's missing the functionality of "repeat" argument
 (def-iter iterator-product (item-vec indices lengths stopped)
 
     (product (&rest iterables)
@@ -146,7 +145,6 @@ If `r` is not given, it defaults to the length of the input iterable
             (init-state r (n (length ivec)) (pool ivec)
                         (indices (iter-to-vec (range 0 r 1)))))))
 
-  ;; TODO Strictly speaking, this should return a set
   (if stopped
       (values nil nil)
       (multiple-value-prog1
@@ -178,7 +176,6 @@ order
                     (pool pool)
                     (indices (iter-to-vec (repeat 0 r))))))
 
-  ;; TODO Strictly speaking, this should return a multiset
   (if stopped
       (values nil nil)
       (multiple-value-prog1
