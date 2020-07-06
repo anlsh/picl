@@ -208,7 +208,9 @@ article.definition .docstring pre {
   border-left: 0.3em solid #0088EE;
   padding-left: 0.3em;
   display: block;
-} </style> </head> <body> <article class="project"> <header>  <h1>picl</h1>  <span class="version">0.0.1</span>  <nav class="languages">      </nav>  <p class="description">Python Itertools in Common Lisp</p>  <nav class="pages">    <a href="iterate/picl/index.html">picl/iterate</a>    <a href="tests/picl/index.html">picl/tests</a>  </nav> </header> <section id="documentation"><h1>picl</h1> <h4><em>Anish Moorthy <a href="mailto:anlsh@protonmail.com">mailto:anlsh@protonmail.com</a></em></h4> <p><em>Python Iterators in Common Lisp. Pronounced like &quot;pickle&quot;</em></p> <p>An (almost) complete port of Python's <a href="https://docs.python.org/3.8/library/itertools.html">itertools</a> package.
+} </style> </head> <body> <article class="project"> <header>  <h1>picl</h1>  <span class="version">0.0.1</span>  <nav class="languages">      </nav>  <p class="description">Python Itertools in Common Lisp</p>  <nav class="pages">    <a href="iterate/picl/index.html">picl/iterate</a>    <a href="tests/picl/index.html">picl/tests</a>  </nav> </header> <section id="documentation"><h1>Important Note: Pre-Release</h1> <p>I am currently soliciting feedback on the codebase, and won't garuntee the
+    stability of any existing functionality yet. With that said, I don't expect
+    this to last too long or for the API to change that much</p> <h1>picl</h1> <h4><em>Anish Moorthy <a href="mailto:anlsh@protonmail.com">mailto:anlsh@protonmail.com</a></em></h4> <p><em>Python Itertools in Common Lisp. Pronounced like &quot;pickle&quot;</em></p> <p>An (almost) complete port of Python's <a href="https://docs.python.org/3.8/library/itertools.html">itertools</a> package.
 Pull requests welcome!</p> <h3>Objectives and Rationale</h3> <p>I am aware of other libraries providing similar functionality, notably
 - <a href="https://github.com/mabragor/cl-itertools">cl-itertools</a> - <a href="https://github.com/BnMcGn/snakes">snakes</a>, in addition to providing
   Python-style generators</p> <p>Unfortunately <code>cl-itertools</code> remains very incomplete,
@@ -216,18 +218,18 @@ and <code>snakes</code> relies on <code>cl-cont</code> meaning that it doesn't p
 with the condition system (apparently).</p> <p>My hope is to reduce fragmentation of the Common Lisp ecosystem by providing a
 library which is complete, performant, and &quot;seamless&quot; (whatever that means
 nowadays).</p> <h3>Documentation</h3> <p>All functions are annotated with markdown docstrings. Thanks to Shinmera's <a href="https://github.com/Shinmera/staple">Staple</a> and <a href="https://github.com/htmlpreview/htmlpreview.github.com">htmlpreview</a>,
-you can view the<a href="https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html">documentation here</a></p> <p>(Yes, I'm aware there's some sort of javascript garbage at the bottom of the
-  page: it seems like some a bug with htmlpreview:. It doesn't truncate the
+you can view the <a href="https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html">documentation here</a></p> <p>(Yes, I'm aware there's some sort of javascript garbage at the bottom of the
+  page: it seems like a bug with htmlpreview:. It doesn't truncate the
   documentation however, so I suppose this is just the price I pay for not
-  knowing how to host webpages myself)</p> <p>You can build the documentation yourself like so</p> <pre><code>(<a href="https://Shinmera.github.io/staple/#GENERIC-FUNCTION%20STAPLE%3AGENERATE" class="xref">staple:generate</a> :picl)</code></pre> <p>If you don't have the <code>iterate</code> package loaded it'll complain about invalid
+  knowing how to host webpages myself)</p> <p>You can build the documentation yourself like so</p> <pre><code>(<a href="https://Shinmera.github.io/staple/#GENERIC-FUNCTION%20STAPLE%3AGENERATE" class="xref">staple:generate</a> :picl :if-exists :overwrite)</code></pre> <p>If you don't have the <code>iterate</code> package loaded it'll complain about invalid
 function names, but you can ignore that.</p> <h3>Testing</h3> <p>A fairly comprehensive test suite is provided using <a href="https://common-lisp.net/project/fiveam/">FiveAM</a>.</p> <p>You can run the test suite yourself like so</p> <pre><code>(ql:quickload :picl/tests)
 (fiveam:run! 'picl/tests:suite)</code></pre> <h3>Concepts and How-To</h3> <p>An &quot;iterator&quot; in PICL is simply a function taking no arguments and producing two
 values: the payload and the alive-indicator. The payload represent's the
 iterator's next item, and the alive-indicator should be truthy until after the
-iterator is consumed.</p> <p>By example</p> <pre><code>(<a href="http://l1sp.org/cl/defvar" class="xref">defvar</a> it (<a href="#GENERIC-FUNCTION%20PICL%3AMAKE-ITERATOR" class="xref">make-iterator</a> '(1 2 3)))
-(<a href="#FUNCTION%20PICL%3ANEXT" class="xref">next</a> it) ;; 1 t
-(<a href="#FUNCTION%20PICL%3ANEXT" class="xref">next</a> it) ;; 2 t
-(<a href="#FUNCTION%20PICL%3ANEXT" class="xref">next</a> it) ;; nil nil</code></pre> <p>After returning <code>nil</code>, all further <code><a href="#FUNCTION%20PICL%3ANEXT" class="xref">next</a></code> calls should also produce <code>nil</code> as
+iterator is consumed.</p> <p>By example</p> <pre><code>(let ((it (<a href="#GENERIC-FUNCTION%20PICL%3AMAKE-ITERATOR" class="xref">make-iterator</a> '(1 2))))
+  (<a href="#FUNCTION%20PICL%3ANEXT" class="xref">next</a> it)  ;; (values 1 t)
+  (<a href="#FUNCTION%20PICL%3ANEXT" class="xref">next</a> it)  ;; (values 2 t)
+  (<a href="#FUNCTION%20PICL%3ANEXT" class="xref">next</a> it)) ;; (values nil nil)</code></pre> <p>After returning <code>nil</code>, all further <code><a href="#FUNCTION%20PICL%3ANEXT" class="xref">next</a></code> calls should also produce <code>nil</code> as
 quickly as possible. Furthermore when the alive indicator is <code>nil</code>, the payload
 should be ignored.</p> <p>To create iterators over your own objects, specialize the <code><a href="#GENERIC-FUNCTION%20PICL%3AMAKE-ITERATOR" class="xref">make-iterator</a></code> generic function appropriately to produce a function satisfying the conditions
 described above. For instance, the <code><a href="#GENERIC-FUNCTION%20PICL%3AMAKE-ITERATOR" class="xref">make-iterator</a></code> definition for lists is</p> <pre><code>(<a href="http://l1sp.org/cl/defmethod" class="xref">defmethod</a> <a href="#GENERIC-FUNCTION%20PICL%3AMAKE-ITERATOR" class="xref">make-iterator</a> ((obj <a href="http://l1sp.org/cl/list" class="xref">list</a>))
@@ -248,7 +250,7 @@ everywhere</p> <h4>Missing Functionality</h4> <p>The only functions which are st
 The same effect can be achieved with <code>(product (tee iterable n-repeats))</code>,
 though at a higher memory cost</p> <h3>A note on <code>:use</code></h3> <p>This is a new library, and so I have the liberty to tell you this: do not, and I
 mean <em>do not</em> <code>:use</code> this package. This library might export new symbols in the
-future, and I do not care about accomodating the use of <code>:use</code>.</p> <p>Use a <a href="(https://gist.github.com/phoe/2b63f33a2a4727a437403eceb7a6b4a3)">package local
+future, and I do not care about accomodating the use of <code>:use</code>.</p> <p>Use <a href="(https://gist.github.com/phoe/2b63f33a2a4727a437403eceb7a6b4a3)">package local
 nicknames</a> instead. It would also be cool if you could include similar disclaimers in any
 new CL packages you release and stop <code>:use</code>ing things going forward.</p> <h3>Future Work</h3> <ul> <li>Implement Python's default functions for working with iterables (map, zip, etc)</li> <li>Port the more-itertools recipes found at bottom of the Python itertools
 package</li> <li>Port the <a href="https://pypi.org/project/more-itertools/">more-iterools</a> package
@@ -359,10 +361,6 @@ second, etc until <em>all</em> are consumed. Once a constituent iterable has bee
         root = root || document;
         [].forEach.call(root.querySelectorAll("a.xref"), registerXrefLink);
     }
-
-    markFragmented();
-    registerXrefLinks();
-}); </script> </body> </html>  }
 
     markFragmented();
     registerXrefLinks();
