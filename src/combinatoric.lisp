@@ -184,7 +184,7 @@ order
         (init-state r
                     (n (length pool))
                     (pool pool)
-                    (indices (iter-to-vec (repeat 0 r))))))
+                    (indices (iter-to-vec (repeat r 0))))))
 
   (if stopped
       (values nil nil)

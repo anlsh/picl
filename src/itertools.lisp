@@ -58,16 +58,20 @@ but produces an iterator (as defined by PICL) instead of a Python-esque range ob
 
 (def-iter iterator-repeat (max curr item)
 
-    (repeat (item &optional max-repeats)
-      "Yields its argument forever or `max-repeats` times, if given
+    (repeat (s0 &optional s1)
+      "If a single argument is given, yields `s0` repeatedly forever
+
+If two arguments are given, then yields `s1` `s0` times
 
 ```
 (repeat t)
 ;; t, t, etc
-(repeat t 4)
+(repeat 4 t)
 ;; t, t, t, t
 ```"
-      (init-state item (max max-repeats) (curr 0)))
+      (init-state (item (or s1 s0))
+                  (max (and s1 s0))
+                  (curr 0)))
 
   (if max
       (if (< curr max)

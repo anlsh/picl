@@ -48,9 +48,11 @@
 
 (f:def-test test/repeat ()
   (let ((num-repeats 10)
-        (repeat-el 32))
+        (repeat-el t))
     (f:is (equalp (loop for _ below num-repeats collect repeat-el)
-                  (take num-repeats (repeat repeat-el))))))
+                  (take num-repeats (repeat repeat-el)))))
+  (f:is (iter-makes (repeat 4 t)
+                    '(t t t t))))
 
 (f:def-test test/count ()
   (f:is (equalp (iter-to-list (range 0 10))
