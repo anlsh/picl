@@ -37,7 +37,7 @@ Use `picl:nfold-product` instead.
       (values nil nil)
       (multiple-value-prog1
           (loop with product = (make-array (length indices))
-                for i below (length product)
+                for i below (length indices)
                 for ii = (aref indices i)
                 do (setf (aref product i) (aref (aref item-vec i) ii))
                 finally (return (values product t)))
@@ -51,23 +51,29 @@ Use `picl:nfold-product` instead.
                            (next-combo (1- i)))))))
           (next-combo (1- (length indices)))))))
 
-(def-iter iterator-nfold-product (n item-vec indices length stopped)
+(def-iter iterator-nfold-product (iterable-length product-length item-vec indices stopped)
     (nfold-product (n iterable)
       "Computes the n-fold Cartesian product of an iterable with itself.
 
 Essentially equivalent to `(apply #'product (iter-to-list (tee n iterable))`, but with
-much better memory usage"
+much better memory usage
+
+```
+(nfold-product 3 '(1 2))
+;; #(1 1 1), #(1 1 2), #(1 2 1), #(1 2 2), #(2 1 1), #(2 1 2), #(2 2 1), #(2 2 2)
+```
+"
       (let* ((item-vec (iter-to-vec iterable))
-             (length (length item-vec)))
-        (if (zerop length)
+             (iterable-length (length item-vec)))
+        (if (zerop iterable-length)
             (empty-iterator)
-            (init-state n item-vec length
-                        (indices (make-array length :initial-element 0))))))
+            (init-state iterable-length item-vec (product-length n)
+                        (indices (make-array n :initial-element 0))))))
   (if stopped
       (values nil nil)
       (multiple-value-prog1
-          (loop with product = (make-array n)
-                for i below n
+          (loop with product = (make-array product-length)
+                for i below product-length
                 for ii = (aref indices i)
                 do (setf (aref product i) (aref item-vec ii))
                 finally (return (values product t)))
@@ -76,10 +82,10 @@ much better memory usage"
                        (setf stopped t)
                        (progn
                          (incf (aref indices i))
-                         (when (>= (aref indices i) length)
+                         (when (>= (aref indices i) iterable-length)
                            (setf (aref indices i) 0)
                            (next-combo (1- i)))))))
-          (next-combo (1- n))))))
+          (next-combo (1- product-length))))))
 
 ;; Permutations
 
