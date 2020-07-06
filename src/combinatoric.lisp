@@ -90,25 +90,35 @@ much better memory usage
 
 (def-iter iterator-permutations (r n pool indices stopped cycles)
 
-    (permutations (iterable &optional r)
+    (permutations (s0 &optional (s1 'no-arg))
       "`r`-permutations of input iterable, returned as vectors in lexicographic order.
 
-If `r` is not given, it defaults to the length of the input iterable
+When a single argument is given, it should be an iterable and `r` will default to its length.
+
+When two arguments are given, the first corresponds to `r` and the second to the iterable
+
 
 ```
 (permutations '(1 2 3))
 ;; #(1 2 3), #(1 3 2), #(2 1 3), #(2 3 1), #(3 1 2), #(3 2 1)
-(permutations '(1 2 3) 2)
+(permutations 2 '(1 2 3))
 ;; #(1 2), #(1 3), #(2 1), #(2 3), #(3 1), #(3 2)
 ```"
-      (let* ((ivec (iter-to-vec iterable))
-             (n (length ivec))
-             (r (or r n)))
-        (if (> r n)
-            (empty-iterator)
-            (init-state r n (pool ivec)
-                        (indices (iter-to-vec (range 0 (length ivec) 1)))
-                        (cycles (iter-to-vec (range n (- n r) -1)))))))
+      (labels ((helper (ivec r)
+                 (let ((n (length ivec)))
+                   (if (> r n)
+                       (empty-iterator)
+                       (init-state r n (pool ivec)
+                                   (indices (iter-to-vec (range 0 (length ivec) 1)))
+                                   (cycles (iter-to-vec (range n (- n r) -1))))))))
+        (if (equalp s1 'no-arg)
+            (let* ((ivec (iter-to-vec s0))
+                   (r (length ivec)))
+              (helper ivec r))
+            (let* ((ivec (iter-to-vec s1))
+                   (r s0))
+              (helper ivec r)))))
+
   (if stopped
       (values nil nil)
       (multiple-value-prog1
