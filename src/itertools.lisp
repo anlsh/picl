@@ -16,7 +16,10 @@
 
 (def-iter iterator-range (curr stop step)
     (range (s0 &optional s1 (step 1))
-      "```
+      "Works [as in Python](https://docs.python.org/3/library/stdtypes.html#typesseq-range)
+but produces an iterator (as defined by PICL) instead of a Python-esque range object
+
+```
 (range 5)
 ;; 0, 1, 2, 3, 4
 (range 2 5)
@@ -375,15 +378,15 @@ first returns nil
             (return-from self (values nil nil)))))
   (setf q (cdr q)) (values (car q) t))
 
-(defun tee (iterable &optional (n 2))
-  "Returns a vector of `n` independent copies of `iterliike`. `iterable` itself should not be used
-after it has been passed to `tee`, otherwise its copies will not be properly updated
+(defun tee (n iterable)
+  "Returns a vector of `n` independent copies of `iterable`. `iterable` itself should not be used
+after it has been passed to `tee`, otherwise the tees will not be properly updated
 
-If the base iterable is large be careful not to advance any copy too far ahead of the others, as
-elements which have not yet been consumed by all copies do need to be stored in memory.
+If the base iterable is large be careful not to advance any copy too far ahead of the others,
+so as to avoid memory issues
 
 ```
-tees - (tee '(1 2 3 4))
+tees = (tee 2 '(1 2 3 4))
 ;; tees[0] => 1, 2, 3, 4
 ;; tees[1] => 1, 2, 3, 4
 ```"

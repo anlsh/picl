@@ -16,7 +16,9 @@ Pull requests welcome!
 ### Objectives and Rationale
 
 I am aware of other libraries providing similar functionality, notably
+
 - [cl-itertools](https://github.com/mabragor/cl-itertools)
+
 - [snakes](https://github.com/BnMcGn/snakes), in addition to providing
   Python-style generators
 
@@ -29,7 +31,7 @@ library which is complete, performant, and "seamless" (whatever that means
 nowadays).
 
 ### Documentation
-All functions are annotated with markdown docstrings. Thanks to Shinmera's
+All functions are annotated with markdown docstrings. Thanks to
 [Staple](https://github.com/Shinmera/staple) and [htmlpreview](https://github.com/htmlpreview/htmlpreview.github.com),
 you can view the [documentation here](https://htmlpreview.github.io/?https://github.com/anlsh/picl/blob/master/docs/index.html)
 
@@ -88,7 +90,7 @@ described above. For instance, the `make-iterator` definition for lists is
         (values (prog1 (car obj) (setf obj (cdr obj))) t)
         (values nil nil))))
 ```
-Specializations for `list` and `vector` are defined in PICL. A universal `in-it`
+Specializations for lists and vectors are predefinedL. A universal `in-it`
 driver is also provided for [Iterate](https://common-lisp.net/project/iterate/)
 through the `picl/iterate` system.
 
@@ -99,10 +101,11 @@ through the `picl/iterate` system.
     (iterate:for i in-it #(1 2 3))
     (iterate:collect i))
 ;; (1 2 3)
+
 (iterate:iter
     (iterate:for i in-it (picl:permutations '(1 2 3)))
     (iterate:collect i))
-;;(#(1 2 3) #(1 3 2) #(2 1 3) #(2 3 1) #(3 1 2) #(3 2 1))
+;; (#(1 2 3) #(1 3 2) #(2 1 3) #(2 3 1) #(3 1 2) #(3 2 1))
 ```
 though you should probably `:use` iterate so as not to have the `iterate:` prefix
 everywhere
@@ -112,11 +115,6 @@ The only functions which are still missing are
 [groupby](https://docs.python.org/3.8/library/itertools.html#itertools.groupby)
 and
 [accumulate](https://docs.python.org/3.8/library/itertools.html#itertools.accumulate).
-
-PICL's product function is missing the `repeat` keyword argument from
-[Python's version ](https://docs.python.org/3.8/library/itertools.html#itertools.product).
-The same effect can be achieved with `(product (tee iterable n-repeats))`,
-though at a higher memory cost
 
 ### A note on `:use`
 

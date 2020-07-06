@@ -10,17 +10,15 @@
     (product (&rest iterables)
       "Cartesian product of input iterables, returned as vectors in lexicographic order.
 
-When given a single iterable and a `repeat` argument of `n`, equivalent to computing the
-product of `n` copies of its argument
+Due to the awkwardness in mixing `&rest` and `&key` parameters in lambda lists, this function
+does not implement the `repeat` argument supported in
+[Python's version](https://docs.python.org/3/library/itertools.html#itertools.product).
+Use `picl:nfold-product` instead.
 
 ```
 (product '(1 2) '(3 4))
 ;; #(1 3), #(1 4), #(2 3), #(2 4)
 ```"
-      ;; (when repeat
-      ;;   (unless (= 1 (length iterables))
-      ;;     (error "WExactly one iterable should be given in conjunction with :repeat"))
-      ;;   (return-from product (apply #'product (iter-to-list (tee (car iterables) repeat)))))
       (loop with item-vec = (make-array (length iterables))
             with lengths = (make-array (length iterables))
             for i below (length item-vec)
@@ -30,7 +28,7 @@ product of `n` copies of its argument
             minimizing (aref lengths i) into min-len
             finally
                (return (if (zerop min-len)
-                           (init-state (stopped t))
+                           (empty-iterator)
                            (init-state item-vec
                                        lengths
                                        (indices (make-array (length item-vec)
@@ -52,6 +50,36 @@ product of `n` copies of its argument
                            (setf (aref indices i) 0)
                            (next-combo (1- i)))))))
           (next-combo (1- (length indices)))))))
+
+(def-iter iterator-nfold-product (n item-vec indices length stopped)
+    (nfold-product (n iterable)
+      "Computes the n-fold Cartesian product of an iterable with itself.
+
+Essentially equivalent to `(apply #'product (iter-to-list (tee n iterable))`, but with
+much better memory usage"
+      (let* ((item-vec (iter-to-vec iterable))
+             (length (length item-vec)))
+        (if (zerop length)
+            (empty-iterator)
+            (init-state n item-vec length
+                        (indices (make-array length :initial-element 0))))))
+  (if stopped
+      (values nil nil)
+      (multiple-value-prog1
+          (loop with product = (make-array n)
+                for i below n
+                for ii = (aref indices i)
+                do (setf (aref product i) (aref item-vec ii))
+                finally (return (values product t)))
+        (labels ((next-combo (i)
+                   (if (< i 0)
+                       (setf stopped t)
+                       (progn
+                         (incf (aref indices i))
+                         (when (>= (aref indices i) length)
+                           (setf (aref indices i) 0)
+                           (next-combo (1- i)))))))
+          (next-combo (1- n))))))
 
 ;; Permutations
 
@@ -99,11 +127,11 @@ If `r` is not given, it defaults to the length of the input iterable
 ;; Combinations
 (def-iter iterator-combinations (indices pool stopped r n)
 
-    (combinations (iterable r)
+    (combinations (r iterable)
       "r-combinations of input iterable, returned as vectors in lexicographic order.
 
 ```
-(combinations '(1 2 3) 2)
+(combinations 2 '(1 2 3))
 ;; #(1 2), #(1 3), #(2 3)
 ```"
       (let ((ivec (iter-to-vec iterable)))
@@ -130,12 +158,12 @@ If `r` is not given, it defaults to the length of the input iterable
 
 (def-iter iterator-combinations-with-rep (indices pool stopped r n)
 
-    (combinations-with-rep (iterable r)
+    (combinations-with-rep (r iterable)
       "r-combinations with replacement of input iterable, returned as vectors in lexicographic
 order
 
 ```
-(combinations '(1 2 3) 2)
+(combinations 2 '(1 2 3))
 ;; #(1 1), #(1 2), #(1 3), #(2 1), #(2 2), #(2 3), #(3 1), #(3 2), #(3 3)
 ```"
       (let ((pool (iter-to-vec iterable)))

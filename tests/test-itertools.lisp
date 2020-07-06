@@ -141,7 +141,7 @@
                     (starmap #'+ '((1 2 1) (5) (1 2 3 4) (0 0 0 0 0 2 ))))))
 
 (f:def-test test/tee ()
-  (let* ((tees (tee (make-iterator '(1 2 3 4 5 6 7 8 9 10))))
+  (let* ((tees (tee 2 (make-iterator '(1 2 3 4 5 6 7 8 9 10))))
          (t0 (aref tees 0))
          (t1 (aref tees 1)))
     (f:is (equalp '(1 2 3)

@@ -40,6 +40,12 @@
                                   (iter-to-list (apply #'product (loop for _ below num-sets
                                                                        collect (range 0 setsize))))))))
 
+(f:def-test test/nfold-product ()
+  (let ((n 3)
+        (iter-size 4))
+    (f:is (enums-lexic (expt iter-size n) n
+                       (iter-to-list (nfold-product n (range iter-size)))))))
+
 (f:def-test test/permutations ()
   (f:is (loop for n below 7
               always (enums-lexic (alx:factorial n) n
@@ -50,7 +56,7 @@
               always
               (loop for r upto n
                     always (enums-lexic (alx:binomial-coefficient n r) r
-                                        (iter-to-list (combinations (range 0 n) r)))))))
+                                        (iter-to-list (combinations r (range 0 n))))))))
 
 (f:def-test test/combinations-with-rep ()
   (f:is (loop for n below 7
@@ -59,7 +65,7 @@
                     always (enums-lexic (if (zerop n) 1
                                             (alx:binomial-coefficient (+ n r -1) r))
                                         r
-                                        (iter-to-list (combinations-with-rep (range 0 n) r)))))))
+                                        (iter-to-list (combinations-with-rep r (range 0 n))))))))
 
 ;; Hardcoded tests for the combinatoric iterators. Readable, but quickly become gigantic
 ;; when n gets bigger. Therefore the above
@@ -88,6 +94,14 @@
                             #(3 20 100) #(3 20 200) #(3 20 300)
                             #(3 30 100) #(3 30 200) #(3 30 300))
                       (product '(1 2 3) '(10 20 30) '(100 200 300))))))
+
+(f:def-test test/nfold-product/hardcoded ()
+  (f:is (iter-makes (nfold-product 0 '(1 2))
+                    (list #())))
+  (f:is (iter-makes (nfold-product 7 nil)
+                    (empty-iterator)))
+  (f:is (iter-makes (nfold-product 2 '(1 2))
+                    (list #(1 1) #(1 2) #(2 1) #(2 2)))))
 
 (f:def-test test/permutations/hardcoded ()
   (f:is (iter-makes (list #()) (permutations nil)))
@@ -121,18 +135,18 @@
 
 (f:def-test test/combinations/hardcoded ()
   (f:is (iter-makes (list #(1) #(2) #(3) #(4) #(5))
-                    (combinations '(1 2 3 4 5) 1)))
+                    (combinations 1 '(1 2 3 4 5))))
   (f:is (iter-makes (list #(1 2) #(1 3) #(1 4) #(1 5)
                           #(2 3) #(2 4) #(2 5)
                           #(3 4) #(3 5)
                           #(4 5))
-                    (combinations '(1 2 3 4 5) 2)))
+                    (combinations 2 '(1 2 3 4 5))))
   (f:is (iter-makes (list #(1 2 3) #(1 2 4) #(1 2 5) #(1 3 4) #(1 3 5) #(1 4 5)
                           #(2 3 4) #(2 3 5) #(2 4 5)
                           #(3 4 5))
-                    (combinations '(1 2 3 4 5) 3)))
+                    (combinations 3 '(1 2 3 4 5))))
   (f:is (iter-makes (list #(1 2 3 4) #(1 2 3 5) #(1 2 4 5) #(1 3 4 5)
                           #(2 3 4 5))
-                    (combinations '(1 2 3 4 5) 4)))
+                    (combinations 4 '(1 2 3 4 5))))
   (f:is (iter-makes (list #(1 2 3 4 5))
-                    (combinations '(1 2 3 4 5) 5))))
+                    (combinations 5 '(1 2 3 4 5)))))

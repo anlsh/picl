@@ -2,35 +2,37 @@
 
 (defpackage #:picl
   (:use #:cl)
-  (:local-nicknames (#:dcl #:defclass-std) (#:alx #:alexandria))
+  (:local-nicknames (#:alx #:alexandria) (#:dcl #:defclass-std))
   (:export
    ;; Interface
-   #:next
    #:make-iterator
+   #:next
 
    ;; Itertools
-   #:iter-to-list
-   #:iter-to-vec
-   #:empty-iterator
-   #:range
-   #:enumerate
-   #:icount
-   #:islice
-   #:imap
-   #:zip
-   #:zip-longest
    #:chain
-   #:compress
-   #:cycle
-   #:repeat
-   #:dropwhile
-   #:takewhile
-   #:starmap
-   #:filter
-   #:filterfalse
-   #:permutations
    #:combinations
    #:combinations-with-rep
+   #:compress
+   #:cycle
+   #:dropwhile
+   #:empty-iterator
+   #:enumerate
+   #:empty-iterator
+   #:filter
+   #:filterfalse
+   #:icount
+   #:imap
+   #:islice
+   #:iter-to-list
+   #:iter-to-vec
+   #:nfold-product
+   #:permutations
    #:product
+   #:range
+   #:repeat
+   #:starmap
+   #:take
+   #:takewhile
    #:tee
-   #:take))
+   #:zip
+   #:zip-longest))
