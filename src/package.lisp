@@ -36,4 +36,8 @@
    #:takewhile
    #:tee
    #:zip
-   #:zip-longest))
+   #:zip-longest
+
+   ;; Random other utils
+   #:always
+   #:never))

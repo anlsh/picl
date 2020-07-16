@@ -157,3 +157,13 @@
     (f:is (iter-makes nil (iter-to-list t0)))
     (f:is (iter-makes '(7 8 9 10)
                       (iter-to-list t1)))))
+
+(f:def-test test/always ()
+  (f:is (equalp t (always '(1 2 3))))
+  (f:is (equalp nil (always '(nil))))
+  (f:is (equalp t (always nil))))
+
+(f:def-test test/never ()
+  (f:is (equalp nil (never '(1 2 3))))
+  (f:is (equalp t (never '(nil))))
+  (f:is (equalp t (never nil))))

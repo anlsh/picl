@@ -53,3 +53,39 @@ take 30 (range 4)
         while base-alive
         collecting base-item into ls
         finally (return ls)))
+
+(defun always (iterable)
+  "Truthy iff every element of the argument is truthy
+
+```
+(always '(1 2 3))
+;; t
+(always '(nil))
+;; nil
+(always nil)
+t
+```"
+  (labels ((always-helper (iterator)
+             (multiple-value-bind (payload is-alive) (next iterator)
+               (if is-alive
+                   (and payload (always-helper iterator))
+                   t))))
+    (always-helper (make-iterator iterable))))
+
+(defun never (iterable)
+  "Truthy iff every element of the argument is nil
+
+```
+(never '(1 2 3))
+;; nil
+(never '(nil))
+;; t
+(never nil)
+t
+```"
+  (labels ((never-helper (iterator)
+             (multiple-value-bind (payload is-alive) (next iterator)
+               (if is-alive
+                   (and (not payload) (never-helper iterator))
+                   t))))
+    (never-helper (make-iterator iterable))))
