@@ -56,9 +56,9 @@
 
 (f:def-test test/count ()
   (f:is (equalp (iter-to-list (range 0 10))
-                (take 10 (icount 0 1))))
+                (take 10 (count 0 1))))
   (f:is (equalp (iter-to-list (range 0 8 2))
-                (take 4 (icount 0 2)))))
+                (take 4 (count 0 2)))))
 
 (f:def-test test/cycle ()
   (f:is (equalp '(1 2 3 4 1 2 3 4)
@@ -66,13 +66,13 @@
 
 (f:def-test test/islice ()
   (f:is (iter-makes (range 10 20 2)
-                    (islice (icount) 10 20 2)))
+                    (islice (count) 10 20 2)))
   (f:is (iter-makes (range 113 257 7)
-                    (islice (icount) 113 257 7))))
+                    (islice (count) 113 257 7))))
 
-(f:def-test test/imap ()
+(f:def-test test/map ()
   (f:is (iter-makes (range 0 18 6)
-                    (imap #'+ (icount) (range 0 6 2) (range 0 9 3)))))
+                    (map #'+ (count) (range 0 6 2) (range 0 9 3)))))
 
 (f:def-test test/compress ()
   (f:is (iter-makes '(1 2 3 4 5 6)
@@ -120,9 +120,9 @@
                                '(1 2 3 4 5 6))))
   (f:is (iter-makes '(0 1 2 3 4 5 6)
                     (takewhile (lambda (x) (<= x 6))
-                               (icount 0 1))))
+                               (count 0 1))))
   (f:is (iter-makes '() (takewhile (lambda (x) (declare (ignore x)) nil)
-                                   (icount 0 1)))))
+                                   (count 0 1)))))
 
 (f:def-test test/filter ()
   ;; Also serves to test filterfalse

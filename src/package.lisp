@@ -3,6 +3,7 @@
 (defpackage #:picl
   (:use #:cl)
   (:local-nicknames (#:alx #:alexandria) (#:dcl #:defclass-std))
+  (:shadow #:map #:count)
   (:export
    ;; Interface
    #:make-iterator
@@ -13,18 +14,18 @@
    #:combinations
    #:combinations-with-rep
    #:compress
+   #:count
    #:cycle
    #:dropwhile
    #:empty-iterator
-   #:enumerate
    #:empty-iterator
+   #:enumerate
    #:filter
    #:filterfalse
-   #:icount
-   #:imap
    #:islice
    #:iter-to-list
    #:iter-to-vec
+   #:map
    #:nfold-product
    #:permutations
    #:product

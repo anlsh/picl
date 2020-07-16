@@ -2,7 +2,7 @@
 
 
 (def-iter iterator-count (curr step)
-    (icount (&optional (start 0) (step 1))
+    (count (&optional (start 0) (step 1))
       "Yields the elements `start, start + 1*step, start + 2*step, etc
 
 ```
@@ -307,11 +307,11 @@ elements
         (values (apply fn (iter-to-list base-item)) t)
         (values nil nil))))
 
-(defun imap (predicate &rest iterables)
+(defun map (predicate &rest iterables)
   "Applies `fn` to the first elements of each iterable in `iterables`, then to the seconds, etc
 
 ```
-(imap #'+ '(1 2) '(3 4))
+(map #'+ '(1 2) '(3 4))
 ;; 4, 6
 ```"
   (starmap predicate (apply #'zip iterables)))

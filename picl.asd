@@ -5,7 +5,7 @@
   :author "Anish Moorthy <anlsh@protonmail.com>"
   :homepage "https://anlsh.github.io/picl/"
   :license  "MIT"
-  :version "0.0.1"
+  :version "1.0.0"
   :serial t
   :depends-on (#:defclass-std #:alexandria)
   :components
@@ -15,7 +15,8 @@
                  (:file "default-iterators" :depends-on ("interface"))
                  (:file "utils" :depends-on ("interface"))
                  (:file "itertools" :depends-on ("utils"))
-                 (:file "combinatoric" :depends-on ("utils"))))))
+                 (:file "combinatoric" :depends-on ("utils")))))
+  :in-order-to ((test-op (test-op #:picl/tests))))
 
 
 (asdf:defsystem #:picl/iterate
@@ -35,4 +36,7 @@
   ((:module "tests"
     :components ((:file "package")
                  (:file "test-itertools" :depends-on ("package"))
-                 (:file "test-combinatoric" :depends-on ("package"))))))
+                 (:file "test-combinatoric" :depends-on ("package")))))
+  :perform (test-op (op system)
+                    (funcall (read-from-string "fiveam:run!")
+                             (read-from-string "picl/tests:suite"))))

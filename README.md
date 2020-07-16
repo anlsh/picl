@@ -1,16 +1,13 @@
-# Important Note: Pre-Release
-
-  I am currently soliciting feedback on PICL, so things aren't stable yet.
-  This shouldn't last more than a few days though
-
 # picl
 #### _Anish Moorthy <anlsh@protonmail.com>_
 
-*Python Itertools in Common Lisp. Pronounced like "pickle"*
+*Python Itertools in Common Lisp (v1.0.0). Pronounced like "pickle"*
 
 An (almost) complete port of Python's
 [itertools](https://docs.python.org/3.8/library/itertools.html) package,
 complete with laziness where applicable.
+
+This project currently lives [on Github](https://github.com/anlsh/picl).
 Pull requests welcome!
 
 ### Objectives and Rationale
@@ -41,9 +38,12 @@ that you don't have PICL's dependencies loaded yet.
 ### Testing
 A fairly comprehensive test suite written with
 [FiveAM](https://common-lisp.net/project/fiveam/) is provided. You can run it
-yourself like so
+yourself either manually or through asdf
 
 ``` common-lisp
+;; The easy way
+(asdf:test-system :picl)
+;; The slightly less easy way
 (ql:quickload :picl/tests)
 (fiveam:run! 'picl/tests:suite)
 ```
@@ -108,12 +108,12 @@ and
 
 This is a new library, and so I have the liberty to tell you this: do not, and I
 mean *do not* `:use` this package. This library might export new symbols in the
-future, and I do not care about accomodating the use of `:use`.
+future, and I'm not going to accomodate the use of `:use`.
 
 Use [package local
 nicknames]((https://gist.github.com/phoe/2b63f33a2a4727a437403eceb7a6b4a3))
-instead. It would also be cool if you could include similar disclaimers in any
-new CL packages you release and stop `:use`ing things going forward.
+instead, and maybe even consider adding similar disclaimers in any new libraries
+you release.
 
 ### Future Work
 - Port the more-itertools recipes found at bottom of the Python itertools
