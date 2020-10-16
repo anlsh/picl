@@ -25,10 +25,12 @@ any reliance on `cl-cont` or other such libraries
 
 ### Installation
 
-PICL isn't in Quicklisp yet, though that should [change
-soon](https://github.com/quicklisp/quicklisp-projects/issues/1872). For now,
-you'll probably want to clone/symlink it into your `.quicklisp/local-projects`
-directory so that you can do a `(ql:quickload :picl)`
+PICL is in Quicklisp yet! You can install it like so
+
+``` common-lisp
+(ql:quickload :picl)
+```
+
 
 ### Documentation
 All functions are annotated with markdown docstrings. Thanks to
