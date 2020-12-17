@@ -92,6 +92,12 @@ t
 
 (defun apply (fn &rest args)
   "Like regular apply, except that the final argument can be an arbitrary
-iterable."
+iterable.
+
+```
+(picl:apply #'+ 1 #(2 3))
+;; 6
+```
+"
   (cl:apply fn (loop for (hd tl) on args
                      appending (if tl (list hd) (picl:iter-to-list hd)))))
