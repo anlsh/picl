@@ -89,3 +89,9 @@ t
                    (and (not payload) (never-helper iterator))
                    t))))
     (never-helper (make-iterator iterable))))
+
+(defun apply (fn &rest args)
+  "Like regular apply, except that the final argument can be an arbitrary
+iterable."
+  (cl:apply fn (loop for (hd tl) on args
+                     appending (if tl (list hd) (picl:iter-to-list hd)))))

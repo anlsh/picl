@@ -3,7 +3,7 @@
 (defpackage #:picl
   (:use #:cl)
   (:local-nicknames (#:alx #:alexandria) (#:dcl #:defclass-std))
-  (:shadow #:map #:count)
+  (:shadow #:map #:count #:apply)
   (:export
    ;; Interface
    #:make-iterator
@@ -39,5 +39,6 @@
    #:zip-longest
 
    ;; Random other utils
+   #:apply
    #:always
    #:never))

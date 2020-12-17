@@ -20,6 +20,10 @@
 (f:def-test test/empty-iterator ()
   (f:is (iter-makes nil nil)))
 
+(f:def-test test/apply ()
+  (f:is (picl:apply #'+ 1 #(2 3))
+        6))
+
 (f:def-test test/enumerate ()
   (f:is (iter-makes (enumerate '(:a :b :c))
                     '((0 :a) (1 :b) (2 :c)))))
