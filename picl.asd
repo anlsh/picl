@@ -5,7 +5,7 @@
   :author "Anish Moorthy <anlsh@protonmail.com>"
   :homepage "https://anlsh.github.io/picl/"
   :license  "MIT"
-  :version "1.0.0"
+  :version "1.0.1"
   :serial t
   :depends-on (#:defclass-std #:alexandria)
   :components

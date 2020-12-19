@@ -1,6 +1,6 @@
 (defpackage picl/tests
   (:use :cl :picl)
-  (:shadowing-import-from #:picl #:map #:count)
+  (:shadowing-import-from #:picl #:map #:count #:apply)
   (:local-nicknames (#:f #:fiveam) (#:gcl #:generic-cl) (#:alx #:alexandria))
   (:export #:suite))
 
