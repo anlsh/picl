@@ -10,5 +10,5 @@
     (let ((kwd (if iterate:generate 'iterate:generate 'iterate:for)))
       `(progn
          (iterate:with ,g = (picl:make-iterator ,iterable))
-         (,kwd ,var next (multiple-value-bind (,curr ,alive) (funcall ,#'picl:next ,g)
+         (,kwd ,var next (multiple-value-bind (,curr ,alive) (funcall #'picl:next ,g)
                            (if ,alive ,curr (iterate:terminate))))))))
