@@ -30,6 +30,9 @@ PICL is in Quicklisp, and can be installed as follows
 (ql:quickload :picl)
 ```
 
+Do not `:use` this package: it might export new symbols in the future. You have
+been forewarned.
+
 ### Documentation
 Thanks to [Staple](https://github.com/Shinmera/staple) you can
 [read the documentation online](https://anlsh.github.io/picl) or build it
@@ -90,20 +93,27 @@ through the `picl/iterate` system.
 
 ``` common-lisp
 (ql:quickload '(:picl :picl/iterate))
-
-(iterate:iter
-    (iterate:for i in-it (picl:permutations '(1 2 3)))
-    (iterate:collect i))
+;; The "iterate" package has been :use'd here
+(iterate
+    (for i in-it (picl:permutations '(1 2 3)))
+    (collect i))
 ;; (#(1 2 3) #(1 3 2) #(2 1 3) #(2 3 1) #(3 1 2) #(3 2 1))
 ```
+*Note:* All of the combinatoric iterators produce vectors, which can be
+annoying because those are second-class citizens in CL (you can't destructure
+them, for instance). To get around this, you can wrap the iterator in
+`(picl:map #'iter-to-list <>)`
 
-### A note on `:use`
-
-Do not `:use` this package. This library might export new symbols in the
-future. You have been forewarned.
+``` common-lisp
+(picl:iter-to-list (picl:map #'picl:iter-to-list (picl:permutations '(1 2 3))))
+((1 2 3) (1 3 2) (2 1 3) (2 3 1) (3 1 2) (3 2 1))
+```
+It's a bit clunky for sure, so in the future I might extend the `in-it`
+clause to perform conversions like this when specified
 
 ### Future Work
-Missing functions from Python's itertools
+Functions still missing from Python's itertools (due to laziness: if you need
+these drop an issue/PR and I'll get around to implementing them)
 - [groupby](https://docs.python.org/3.8/library/itertools.html#itertools.groupby)
 - [accumulate](https://docs.python.org/3.8/library/itertools.html#itertools.accumulate)
 
@@ -112,6 +122,8 @@ Extensions to library
 package
 - Port the [more-iterools](https://pypi.org/project/more-itertools/) package
 (seems like a big job)
+- Some sort of integration with [fset](https://common-lisp.net/project/fset/)'s
+sequence type?
 
 ## License
 
