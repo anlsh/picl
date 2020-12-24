@@ -1,3 +1,7 @@
+# Action to build the docs and subsequently update the website.
+# Generate-Docs is pretty much a complete subset of this... I wonder how I'm
+# supposed to factor out the common functionality?
+
 name: Update-Doc-Website
 
 on:
@@ -7,7 +11,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-docs:
+  build-and-push-documentation:
     runs-on: ubuntu-latest
 
     # Maybe I should actually split this up into logical steps

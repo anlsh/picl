@@ -1,0 +1,30 @@
+# This is pretty much duplicated / stripped down from the "build and push"
+# workflow
+
+name: Test Documentation generation
+
+on:
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  test-doc-generation:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Do-Everything
+        run: |
+          set -e
+          # Actually generate the documentation
+          docker run -v $(pwd):/tmp/picl -w /tmp/picl \
+            daewok/lisp-devel:ql "sbcl" \
+              --disable-debugger \
+              --eval '(ql:quickload :staple)' \
+              --eval '(push #P"/tmp/" ql:*local-project-directories*)' \
+              --eval '(ql:quickload :picl)' \
+              --eval '(ql:quickload :picl/tests)' \
+              --eval '(ql:quickload :picl/iterate)' \
+              --eval '(staple:generate :picl :if-exists :supersede)'
