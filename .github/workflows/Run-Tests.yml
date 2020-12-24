@@ -1,0 +1,28 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Run-Tests
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+  workflow_dispatch:
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run the tests using FiveAM
+        run: |
+          set -e
+          docker run -v $(pwd):/tmp/picl -w /tmp/picl \
+            daewok/lisp-devel:ql "sbcl" \
+              --disable-debugger \
+              --eval '(push #P"/tmp/" ql:*local-project-directories*)' \
+              --eval '(ql:quickload :picl/tests)' \
+              --eval '(setf fiveam:*verbose-failures* t)' \
+              --eval '(unless (fiveam:run! (quote picl/tests:suite)) (error "Tests failed"))'
