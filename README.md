@@ -1,4 +1,4 @@
-# picl
+# picl [![Run-Tests Actions Status](https://github.com/anlsh/picl/workflows/Run-Tests/badge.svg)](https://github.com/anlsh/picl/actions)
 #### _Anish Moorthy <anlsh@protonmail.com>_
 
 *Python Itertools in Common Lisp (v1.0.0). Pronounced like "pickle"*
