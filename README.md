@@ -106,7 +106,7 @@ them, for instance). To get around this, you can wrap the iterator in
 
 ``` common-lisp
 (picl:iter-to-list (picl:map #'picl:iter-to-list (picl:permutations '(1 2 3))))
-((1 2 3) (1 3 2) (2 1 3) (2 3 1) (3 1 2) (3 2 1))
+;; ((1 2 3) (1 3 2) (2 1 3) (2 3 1) (3 1 2) (3 2 1))
 ```
 It's a bit clunky for sure, so in the future I might extend the `in-it`
 clause to perform conversions like this when specified
