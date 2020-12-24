@@ -1,0 +1,60 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Update-Docs
+
+# Controls when the action will run.
+on:
+  # Triggers the workflow on push or pull request events but only for the master branch
+  push:
+    branches: [ master ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build-docs:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v2
+
+      - name: Do-Everything
+        env:
+          GITHUB_USERNAME: anlsh
+          GITHUB_DOC_REPO_NAME: anlsh.github.io.git
+          DEST_FOLDER: /tmp/anlsh.github.io
+          PICL_DOC_FOLDER: picl
+          DOC_REPO_PAT: ${{ secrets.DOC_REPO_PAT }}
+        run: |
+          set -e
+          # Actually generate the documentation
+          docker run -v ${DEST_FOLDER}:${DEST_FOLDER} -v $(pwd):/tmp/picl -w /tmp/picl \
+            daewok/lisp-devel:ql "sbcl" \
+              --disable-debugger \
+              --eval '(ql:quickload :staple)' \
+              --eval '(push #P"/tmp/" ql:*local-project-directories*)' \
+              --eval '(ql:quickload :picl)' \
+              --eval '(ql:quickload :picl/tests)' \
+              --eval '(ql:quickload :picl/iterate)' \
+              --eval '(staple:generate :picl :if-exists :supersede)'
+
+          # Now upload it to the doc website
+
+          sudo rm -rf ${DEST_FOLDER}
+          sudo git clone https://github.com/${GITHUB_USERNAME}/${GITHUB_DOC_REPO_NAME} ${DEST_FOLDER}
+          sudo rm -rf ${DEST_FOLDER}/${PICL_DOC_FOLDER}
+          sudo mv docs/ ${DEST_FOLDER}/${PICL_DOC_FOLDER}
+          cd ${DEST_FOLDER}
+          sudo git add ${PICL_DOC_FOLDER}
+
+          # Git stuff (eww) (the author flag doesnt work wtf)
+          sudo git config user.name "DocBot"
+          sudo git config user.email "<>"
+          sudo git commit --allow-empty -m "Generate docs for picl:${GITHUB_SHA}"
+          sudo git push https://${GITHUB_USERNAME}:${DOC_REPO_PAT}@github.com/${GITHUB_USERNAME}/${GITHUB_DOC_REPO_NAME}
+          exit 0
