@@ -61,7 +61,7 @@ yourself either manually or through asdf
 
 An "iterator" in PICL is simply a
 [thunk](https://wiki.c2.com/?ProcedureWithNoArguments) producing two values: the
-payload and the alive-indicator. The he alive-indicator should be truthy until
+payload and the alive-indicator. The alive-indicator should be truthy until
 *after* the iterator is consumed.
 
 By example
