@@ -10,12 +10,10 @@
 (iter-to-list (count))
 ;; Out of memory error!
 ```"
-  (labels ((rec (iterator)
-             (multiple-value-bind (base-item base-alive) (next iterator)
-               (if base-alive
-                   (cons base-item (iter-to-list iterator))
-                   nil))))
-    (rec (make-iterator iterable))))
+  (loop with iterator = (make-iterator iterable)
+        collecting (multiple-value-bind (payload alive?) (next iterator)
+                     (if alive? payload (return result)))
+          into result))
 
 (defun iter-to-vec (iterable)
   "Reads `iterable` into a vector
