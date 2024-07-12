@@ -92,6 +92,10 @@
   (f:is (iter-makes '(1 2 3 4 5 6) (chain '(1 2 3) '(4 5 6))))
   (f:is (iter-makes '(1 2 3 4 5 6) (chain '() '(1 2 3) '() '(4 5 6) '()))))
 
+(f:def-test test/chain-from-iter ()
+  (f:is (iter-makes '(0 0 1 0 1 2 0 1 2 3)
+        (take 10 (chain-from-iter (picl:map (lambda (x) (range x)) (count)))))))
+
 (f:def-test test/zip ()
   (f:is (iter-makes (list #(1 2 nil))
                     (zip '(1) '(2 3 nil) '(nil 4))))
