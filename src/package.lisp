@@ -11,6 +11,7 @@
 
    ;; Itertools
    #:chain
+   #:chain-from-iter
    #:combinations
    #:combinations-with-rep
    #:compress
