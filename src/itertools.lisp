@@ -113,12 +113,21 @@ If the base iterator is empty, the result of iterator-cycle will be too
 
 (def-iter iterator-chain-from-iter (curr-iter itail)
 
-    (chain-from-iter (itl-of-itls)
-      (let ((itl-of-itls (make-iterator itl-of-itls)))
-        (multiple-value-bind (curr-iter its-alive) (next itl-of-itls)
+    (chain-from-iter (iterable-of-iterables)
+  "Yields the elements of the first iterable in `iterable`, then the second, etc.
+
+Equivalent to python's chain.from_iterable(), and conceptually equivalent to
+`(picl:apply #'picl:chain iterable-of-iterables)`.
+
+```
+(chain-from-iter (picl:map (lambda (x) (picl:range x))) (picl:count))
+;; 0, 0, 1, 0, 1, 2, 0, 1, 2, 3, etc
+```"
+      (let ((iterable-of-iterables (make-iterator iterable-of-iterables)))
+        (multiple-value-bind (curr-iter its-alive) (next iterable-of-iterables)
           (if its-alive
               (init-state (curr-iter (make-iterator curr-iter))
-                          (itail itl-of-itls))
+                          (itail iterable-of-iterables))
               (empty-iterator)))))
 
   (multiple-value-bind (curr-item curr-alive) (next curr-iter)
